@@ -34,65 +34,58 @@ int main(void)
             printf("%.1f ", ar[i][j]);
         printf("\n");
     }
-    ar = remove_zeros(ar, n, k);
-    for(int i = 0; i < n; i++)
-    {
-        for(int j = 0; j < k; j++)
-            printf("%.1f ", ar[i][j]);
-        printf("\n");
-    }
-    // int x = count_determinant(ar, n, k);
-    // printf("%d", x);
+    int x = count_determinant(ar, n, k);
+    printf("%d", x);
     return 0;
 }
 
 double** to_uptriang_matrix(double** ar, int h, int w)
 {
-    printf("D: func started\n");
+    //printf("D: func started\n");
     if(h != w) return 0; // Определяем, возможно ли посчитать определитель
     double** temp = copy_to_temp(ar, h, w);
     
     for(int i = 0; i < w; i++) // Первый цикл для перебора столбцов
     {
-        printf("DEEP 1: IN\n");
+        //printf("DEEP 1: IN\n");
         for(int j = i; j < h - 1; j++) // Второй цикл для перебора строк
         {
-            printf("DEEP 2: (%d)IN\n", j);
+            //printf("DEEP 2: (%d)IN\n", j);
             double r; // Коэффицент, на который мы будем домножать вычитаемое значение
             double x; // Вычитаемое значение (верхняя строчка типа)
             double y; // Ззначение которое нужно обнулить
-            printf("inic 2\n");
+            //printf("inic 2\n");
 
             if(temp[j + 1][i] != 0.0) // Если ззначение которое нужно обнулить уже обнулено то мы НИчегго не делаем  азу перехмдио к след шагу!
             { 
-                printf("DEEP 2 IF\n");
+                //printf("DEEP 2 IF\n");
                 x = temp[i][i];  
                 y = temp[j + 1][i];
                 r = y / x;
             }
             else 
             {
-                printf("DEEP 2 BREAKOUT\n");
+                //printf("DEEP 2 BREAKOUT\n");
                 break;
             }
 
             for(int k = 0; k < w; k++) // Вычитаем из каждого элемента строки верхнее значение домноженное на r
             {
-                printf("DEEP 3: IN\n");
+                //printf("DEEP 3: IN\n");
                 temp[j + 1][k] = temp[j + 1][k] - (temp[i][k] * r);
-                printf("\n");
-                for(int i = 0; i < h; i++) // Выводим каждое изменение массива
-                {
-                    for(int j = 0; j < w; j++)
-                        printf("%.1f ", temp[i][j]);
-                    printf("\n");
-                }
-                printf("\n");
-                printf("DEEP 3: OUT\n");
+                // printf("\n");
+                // for(int i = 0; i < h; i++) // Выводим каждое изменение массива
+                // {
+                //     for(int j = 0; j < w; j++)
+                //         printf("%.1f ", temp[i][j]);
+                //     printf("\n");
+                // }
+                // printf("\n");
+                //printf("DEEP 3: OUT\n");
             }
-            printf("DEEP 2: OUT\n");
+            //printf("DEEP 2: OUT\n");
         }
-        printf("DEEP 1: OUT\n");
+        //printf("DEEP 1: OUT\n");
     }
     return temp;
 }
@@ -109,7 +102,7 @@ double count_determinant(double** ar, int h, int w)
     for(int i = 0; i < h; i++)
     {
         res *= temp[i][i];
-        printf("%.1f %.1f\n", res, temp[i][i]);
+        //printf("%.1f %.1f\n", res, temp[i][i]);
     }
 
     printf("\n");
@@ -207,12 +200,12 @@ double** remove_zeros(double** ar, int w, int h)
         {
             if(temp[i][j] == 0.0)
             {
-                printf("\neshkere\n");
+                //printf("\neshkere\n");
                 for(int k = 0; k < h; k++)
                 {
                     if(temp[k][j] != 0.0)
                     {
-                        printf("\nshkere2\n");
+                        //printf("\nshkere2\n");
                         for(int p = 0; p < w; p++)
                         {
                             temp[i][p] += temp[k][p];
