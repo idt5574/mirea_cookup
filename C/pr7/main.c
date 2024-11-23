@@ -9,6 +9,7 @@ void check_student();
 void del_student();
 void change_student();
 void show_all_students();
+void secret_debug_output();
 
 typedef enum {
     check = 1,
@@ -16,7 +17,8 @@ typedef enum {
     del = 3,
     chg = 4,
     sas = 5,
-    qt = 6
+    qt = 6,
+    sdf = 7
 } CHOOSE;
 
 int main(void)
@@ -33,7 +35,7 @@ int main(void)
         case check:
             check_student();
             break;
-
+            
         case add:
             add_student();
             break;
@@ -55,9 +57,14 @@ int main(void)
             printf("Bye!\n");
             delay(1);
             return 0;
+        
+        case sdf:
+            secret_debug_output();
+            break;
 
         default:
             system("cls");
+            
             printf("This command is doesn't exist!\n\n");
             delay(2);
             break;
