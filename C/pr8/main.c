@@ -9,14 +9,15 @@
 typedef struct tag_character CHARACTER;
 typedef struct tag_coords COORDINATES;
 
-void output_map(char* map[], CHARACTER person);
 int check_coordinates(COORDINATES*, int, COORDINATES);
-void show_ui(char* map[], CHARACTER person, bool is_map_show, bool is_commands_show);
+void show_ui(char* map[], CHARACTER person, bool* condition);
 
 int main(void)
 {
     SetConsoleOutputCP(CP_UTF8);
     char c = '\0';
+
+    bool output_condition[3] = {true, true, true};
     
     // Define the new character position
     CHARACTER new_character = {.crd.x = 5, .crd.y = 5};
@@ -28,24 +29,26 @@ int main(void)
 
     // Use pointers to strings for each row (allocate memory)
     char *map[10] = {
-        malloc(12), malloc(12), malloc(12), malloc(12), malloc(12),
-        malloc(12), malloc(12), malloc(12), malloc(12), malloc(12)
+        malloc(13), malloc(13), malloc(13), malloc(13), malloc(13),
+        malloc(13), malloc(13), malloc(13), malloc(13), malloc(13)
     };
-    
-    // Initialize the map with the box characters
-    strcpy(map[0], "╔════════╗\n");
-    strcpy(map[1], "║        ║\n");
-    strcpy(map[2], "║        ║\n");
-    strcpy(map[3], "║        ║\n");
-    strcpy(map[4], "║        ║\n");
-    strcpy(map[5], "║        ║\n");
-    strcpy(map[6], "║   #    ║\n");
-    strcpy(map[7], "║        ║\n");
-    strcpy(map[8], "║        ║\n");
-    strcpy(map[9], "╚════════╝\n");
-    
+
+    const char *initial_map[] = {
+        "╔========╗\0", "║        ║\0", "║        ║\0", "║        ║\0",
+        "║        ║\0", "║        ║\0", "║   #    ║\0", "║        ║\0",
+        "║        ║\0", "╚========╝\0"
+    };
+
+    for (int i = 0; i < 10; i++) {
+        strncpy(map[i], initial_map[i], 16);
+    }
+
+    // for (int i = 0; i < 10; i++) {
+    // printf("MAP[%d]: %s\n", i, map[i]);
+    // }
+
     // Print the modified map
-    show_ui(map, new_character, true, true);
+    show_ui(map, new_character, output_condition);
 
     while (1) { 
         if (kbhit()) { 
@@ -60,9 +63,8 @@ int main(void)
             }
 
             new_character.crd.y -= 1;
-            show_ui(map, new_character, true, true);
+            show_ui(map, new_character, output_condition);
             c = '\0'; 
-            printf("x: %d; y: %d", new_character.crd.x, new_character.crd.y);
         } else if(c == 'a')
         {
             if(check_coordinates(border_a, 9, new_character.crd) == 1)
@@ -72,9 +74,8 @@ int main(void)
             }
 
             new_character.crd.x -= 1;
-            show_ui(map, new_character, true, true);
+            show_ui(map, new_character, output_condition);
             c = '\0';
-            printf("x: %d; y: %d", new_character.crd.x, new_character.crd.y);
         } else if(c == 's')
         {
             if(check_coordinates(border_s, 9, new_character.crd) == 1)
@@ -84,9 +85,8 @@ int main(void)
             }
 
             new_character.crd.y += 1;
-            show_ui(map, new_character, true, true);
+            show_ui(map, new_character, output_condition);
             c = '\0'; 
-            printf("x: %d; y: %d", new_character.crd.x, new_character.crd.y);
         } else if(c == 'd')
         {
             if(check_coordinates(border_d, 9, new_character.crd) == 1)
@@ -96,9 +96,34 @@ int main(void)
             }
 
             new_character.crd.x += 1;
-            show_ui(map, new_character, true, true);
+            show_ui(map, new_character, output_condition);
             c = '\0'; 
-            printf("x: %d; y: %d", new_character.crd.x, new_character.crd.y);
+        } else if(c == 'h'){
+            if(check_coordinates(border_d, 9, new_character.crd) == 1)
+            {
+                c = '\0';
+                continue;
+            }
+
+            if(output_condition[1])
+                output_condition[1] = false;
+            else output_condition[1] = true;
+
+            show_ui(map, new_character, output_condition);
+            c = '\0'; 
+        } else if(c == 'c'){
+            if(check_coordinates(border_d, 9, new_character.crd) == 1)
+            {
+                c = '\0';
+                continue;
+            }
+
+            if(output_condition[2])
+                output_condition[2] = false;
+            else output_condition[2] = true;
+
+            show_ui(map, new_character, output_condition);
+            c = '\0'; 
         } else if(c == '`')
             break;
     }
