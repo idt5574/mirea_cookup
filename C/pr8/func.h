@@ -10,9 +10,17 @@ typedef struct tag_coords
     int x, y;
 } COORDINATES;
 
+typedef struct tag_item
+{
+    char name[15];
+    int id;
+}ITEM;
+
 typedef struct tag_character
 {
     COORDINATES crd;
+    ITEM* inventory[5];
+    int count_of_items;
 } CHARACTER;
 
 int check_coordinates(COORDINATES* ar, int len, COORDINATES arg)
@@ -40,7 +48,7 @@ void output_hints(char* ui[], COORDINATES crd)
     COORDINATES s_block[9] = {{3, 8}, {4, 8}, {5, 8}, {6, 8}, {7, 8}, {8, 8}, {9, 8}, {10, 8}, {6, 5}};
     COORDINATES d_block[9] = {{10, 1}, {10, 2}, {10, 3}, {10, 4}, {10, 5}, {10, 6}, {10, 7}, {10, 8}, {5, 6}};
 
-    char str[7] = "    ch "; // Инициализация пустой строки с местом для `\0`
+    char str[8] = "    che "; // Инициализация пустой строки с местом для `\0`
 
     // Проверяем блокировку и обновляем строку
     if (check_coordinates(w_block, 9, crd) != 1) str[0] = 'w';
@@ -60,12 +68,51 @@ void output_coordinates(char* ui[], COORDINATES arg)
     return;
 }
 
-void show_ui(char* map[], CHARACTER person, bool* condition)
+void output_inventory(char* ui[], CHARACTER person, int* icl)
+{
+    const char *initial_inventory[9] = {
+        "╔=================╗\0", 
+        "║    INVENTORY    ║\0", 
+        "╠=================╣\0", 
+        "║                 ║\0",
+        "║                 ║\0", 
+        "║                 ║\0", 
+        "║                 ║\0", 
+        "║                 ║\0",
+        "╚=================╝\0"
+    };
+
+    int written_items = 0;
+
+    for(int i = 0; i < 3; i++)
+        strncat(ui[i], initial_inventory[i], 25);
+    
+    for(int i = 0; i < 6; i++)
+    {
+        if(written_items < person.count_of_items)
+        {
+            char* str = malloc(25);
+            if(i != *icl)
+                sprintf(str, "║%d) %-15s║\0", i + 1, person.inventory[i]->name);
+            else
+                sprintf(str, "║>  %-14s║\0", person.inventory[i]->name);
+            strncat(ui[i + 3], str, 25);
+            written_items++;
+            free(str);
+        } else{
+            strncat(ui[i + 3], initial_inventory[i + 3], 25);
+        }
+    }
+
+    return;
+}
+
+void show_ui(char* map[], CHARACTER person, bool* condition, int* icl)
 {
     system("cls");
     char *UI[12];
     for (int i = 0; i < 12; i++){
-        UI[i] = calloc(12, sizeof(char));
+        UI[i] = calloc(32, sizeof(char));
         if (UI[i] == NULL) {
             printf("Memory allocation failed!\n");
             exit(1);
@@ -80,7 +127,9 @@ void show_ui(char* map[], CHARACTER person, bool* condition)
 
     if(condition[2])
         output_coordinates(UI, person.crd);
-    
+
+    if(condition[3])
+        output_inventory(UI, person, icl);
 
     for(int i = 0; i < 12; i++)
     {
@@ -93,4 +142,12 @@ void show_ui(char* map[], CHARACTER person, bool* condition)
     }
     
     return;
+}
+
+void move_on_inventory(char act, int icl)
+{
+    // if(act == 'w')
+    // {
+    //     if(icl > 0)
+    // }
 }

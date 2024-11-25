@@ -8,19 +8,25 @@
 
 typedef struct tag_character CHARACTER;
 typedef struct tag_coords COORDINATES;
+typedef struct tag_item ITEM;
 
 int check_coordinates(COORDINATES*, int, COORDINATES);
-void show_ui(char* map[], CHARACTER person, bool* condition);
+void show_ui(char* map[], CHARACTER person, bool* condition, int* icl);
 
 int main(void)
 {
     SetConsoleOutputCP(CP_UTF8);
     char c = '\0';
+    int inv_cursor_location = 0;
 
-    bool output_condition[3] = {true, true, true};
+    bool output_condition[4] = {true, true, true, false};
+    bool is_inventory_open = false;
     
     // Define the new character position
-    CHARACTER new_character = {.crd.x = 5, .crd.y = 5};
+    CHARACTER new_character = {.crd.x = 5, .crd.y = 5, {}, 0};
+    ITEM new_item = {"item\0", 0};
+    new_character.inventory[0] = &new_item;
+    new_character.count_of_items++;
     
     COORDINATES border_w[9] = {{3, 1}, {4, 1}, {5, 1}, {6, 1}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {6, 7}};
     COORDINATES border_a[9] = {{3, 1}, {3, 2}, {3, 3}, {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, {7, 6}};
@@ -48,7 +54,7 @@ int main(void)
     // }
 
     // Print the modified map
-    show_ui(map, new_character, output_condition);
+    show_ui(map, new_character, output_condition, &inv_cursor_location);
 
     while (1) { 
         if (kbhit()) { 
@@ -63,7 +69,7 @@ int main(void)
             }
 
             new_character.crd.y -= 1;
-            show_ui(map, new_character, output_condition);
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
             c = '\0'; 
         } else if(c == 'a')
         {
@@ -74,7 +80,7 @@ int main(void)
             }
 
             new_character.crd.x -= 1;
-            show_ui(map, new_character, output_condition);
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
             c = '\0';
         } else if(c == 's')
         {
@@ -85,7 +91,7 @@ int main(void)
             }
 
             new_character.crd.y += 1;
-            show_ui(map, new_character, output_condition);
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
             c = '\0'; 
         } else if(c == 'd')
         {
@@ -96,33 +102,31 @@ int main(void)
             }
 
             new_character.crd.x += 1;
-            show_ui(map, new_character, output_condition);
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
             c = '\0'; 
-        } else if(c == 'h'){
-            if(check_coordinates(border_d, 9, new_character.crd) == 1)
-            {
-                c = '\0';
-                continue;
-            }
-
+        } else if(c == 'h')
+        {
             if(output_condition[1])
                 output_condition[1] = false;
             else output_condition[1] = true;
 
-            show_ui(map, new_character, output_condition);
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
             c = '\0'; 
-        } else if(c == 'c'){
-            if(check_coordinates(border_d, 9, new_character.crd) == 1)
-            {
-                c = '\0';
-                continue;
-            }
-
+        } else if(c == 'c')
+        {
             if(output_condition[2])
                 output_condition[2] = false;
             else output_condition[2] = true;
 
-            show_ui(map, new_character, output_condition);
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
+            c = '\0'; 
+        } else if(c == 'e')
+        {
+            if(output_condition[3])
+                output_condition[3] = false;
+            else output_condition[3] = true;
+
+            show_ui(map, new_character, output_condition, &inv_cursor_location);
             c = '\0'; 
         } else if(c == '`')
             break;
