@@ -34,7 +34,7 @@ int main(void)
         8 - move right in obj menu
     */
     
-    // Define the new character position
+    // Define the new character
     CHARACTER new_character = {.crd.x = 5, .crd.y = 5, {}, 0};
 
     add_item(&new_character, "Sword\0", 7, 0);

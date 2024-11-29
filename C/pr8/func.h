@@ -96,9 +96,7 @@ void output_hints(char* ui[], COORDINATES crd, bool* output_condition)
     COORDINATES d_block[10] = {{10, 1}, {10, 2}, {10, 3}, {10, 4}, {10, 5}, {10, 6}, {10, 7}, {10, 8}, {5, 6}, {9, 1}};
     COORDINATES obj_interact[2] = {{9, 1}, {10, 2}};
 
-    char str[9] = "    ch   "; // Инициализация пустой строки с местом для `\0`
-
-    // Проверяем блокировку и обновляем строку
+    char str[9] = "    ch   ";
 
     if(output_condition[0] && !output_condition[3] && !output_condition[6])
     {
@@ -424,10 +422,8 @@ void move_on_inventory(char* map[], CHARACTER* character, bool* output_condition
 
 void move_on_map(char* map[], CHARACTER* character, bool* output_condition, OBJECT* ar_of_obj[])
 {
-    // var for keyboard input
     char c;
 
-    // arrays of borders coordinates
     COORDINATES border_w[10] = {{3, 1}, {4, 1}, {5, 1}, {6, 1}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {6, 7}, {10, 2}};
     COORDINATES border_a[9] = {{3, 1}, {3, 2}, {3, 3}, {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, {7, 6}};
     COORDINATES border_s[9] = {{3, 8}, {4, 8}, {5, 8}, {6, 8}, {7, 8}, {8, 8}, {9, 8}, {10, 8}, {6, 5}};
