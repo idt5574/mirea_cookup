@@ -7,7 +7,7 @@ a - left
 
 d - right 
 
-e - open inventory
+e - open/close inventory
 
 f - interact with objects
 
