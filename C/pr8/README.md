@@ -12,4 +12,5 @@ d - right
 *!!Only works with the english keyboard layout!!*
 
 ## Curent version info
-In this version i only added possibility to walk on the map and to face barriers
+In this version you can interact with inventory
+and with one object on map!
