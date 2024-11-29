@@ -7,6 +7,14 @@ a - left
 
 d - right 
 
+e - open inventory
+
+f - interact with objects
+
+c - hide/show coordinates
+
+h - hide/show hints
+
 ` - quit 
 
 *!!Only works with the english keyboard layout!!*
