@@ -10,3 +10,10 @@ Product::Product(const char* nameplate, unsigned cost=0, _suppliers_ sup=unknown
 : nameplate(nameplate), cost_price(cost), sup(sup)
 { id = next_id++; }
 
+Product::Product(const Product& other)
+{
+    nameplate = other.nameplate;
+    cost_price = other.cost_price;
+    sup = other.sup;
+    id = next_id++;
+}

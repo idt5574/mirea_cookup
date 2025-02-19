@@ -1,19 +1,17 @@
 #include <iostream>
-#include "Product.cpp"
+
+#include "linked_list.cpp"
 
 int main()
 {
-    Product obj {"best product\0", 42, bratyxi_42};
-    Product obj_2 {"swag product\0", 300, rnb_club};
+    DoublyLinkedList lst {(Product){"42 merch", 42000, bratyxi_42}, (Product){"kyrit_kruto", 12000, rnb_club}};
 
-    std::cout << obj.get_id() << ' ' << obj.get_name() << ' ' << obj.get_price() << ' ' << obj.get_supplier() << std::endl;
-    std::cout << obj_2.get_id() << ' ' << obj_2.get_name() << ' ' << obj_2.get_price() << ' ' << obj_2.get_supplier() << std::endl;
+    lst.traverse();
 
-    obj.set_name("42 broduct\0");
+    lst.push((Product){"Goblin", 1000000, rnb_club});
+    lst.remove(1);
 
-    std::cout << std::endl << obj.get_id() << ' ' << obj.get_name() << ' ' << obj.get_price() << ' ' << obj.get_supplier() << std::endl;
-
-    printf("\n");
+    lst.traverse();
 
     return 0;
 }

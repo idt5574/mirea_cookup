@@ -14,7 +14,7 @@ enum _suppliers_ {
 class Product
 {
     unsigned id;
-    std::string nameplate {nullptr};
+    std::string nameplate;
     unsigned cost_price {0};
     _suppliers_ sup {unknown_supplier};
 
@@ -23,6 +23,7 @@ class Product
 public:
 
     Product(const char*, unsigned int, _suppliers_);
+    Product(const Product&);
 
     // Зона геттеров
 
@@ -37,7 +38,7 @@ public:
     void set_supplier(_suppliers_ new_sup) { sup = new_sup; }
     void set_name(const char* new_name) { nameplate = new_name; }
     
-    ~Product() { std::cout << nameplate << " deleted\n"; }
+    ~Product() {}
 
 };
 
