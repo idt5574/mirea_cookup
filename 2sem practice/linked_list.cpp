@@ -2,6 +2,11 @@
 
 #include <iostream>
 
+DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other)
+{
+    *this = other;
+}
+
 void DoublyLinkedList::push(const Product& data)
 {
     shared_node_obj new_node = std::make_shared<Node>(data);
@@ -21,13 +26,20 @@ void DoublyLinkedList::push(const Product& data, bool inEnd)
 
     shared_node_obj new_node = std::make_shared<Node>(data);
 
-    new_node->set_next(head);
+    if(head == nullptr)
+        head = new_node;
+    else
+    {
+        shared_node_obj curr = head;
+        while (curr->get_next() != nullptr)
+            curr = curr->get_next();
+        
+        curr->set_next(new_node);
+        new_node->set_prev(curr);
 
-    if(head != nullptr) 
-        head->set_prev(new_node);
+        curr.reset();
+    }
 
-    
-    tail = new_node;
     new_node.reset();
 }
 
@@ -69,19 +81,19 @@ void DoublyLinkedList::insert(const Product& data, int pos)
 
 shared_node_obj DoublyLinkedList::pop()
 {
-    if(head == nullptr)
-        return nullptr;
+    if(head == NULL)
+        return NULL;
     
-    if(head->get_next() == nullptr)
+    if(head->get_next() == NULL)
     {
         head.reset();
-        return nullptr;
+        return NULL;
     }
 
-    shared_node_obj curr = head->get_prev();
+    shared_node_obj curr = tail->get_prev();
     tail = curr;
     tail->get_next().reset();
-    tail->set_next(nullptr);
+    tail->set_next(NULL);
 
     curr.reset();
 
@@ -136,7 +148,7 @@ void DoublyLinkedList::traverse()
 
     while (curr != nullptr)
     {
-        std::cout << curr->get_name() << std::endl;
+        std::cout << curr->get_id() << ' ' << curr->get_name() << ' ' << curr->get_price() << ' ' << curr->get_supplier() << std::endl;
         curr = curr->get_next();
     }
 
@@ -172,4 +184,71 @@ int DoublyLinkedList::length()
         len++;
     
     return len;
+}
+
+unsigned DoublyLinkedList::search(const Product& other)
+{
+    shared_node_obj curr = head;
+
+    unsigned pos {0};
+
+    while (curr != nullptr)
+    {
+        if(curr->get_id() == other.get_id() && (curr->get_name().compare(other.get_name()) == 0) && curr->get_price() == other.get_price() && curr->get_supplier() == other.get_supplier())
+            return pos;
+
+        curr = curr->get_next();
+        pos++;
+    }
+
+    curr.reset();
+
+    return 128128128;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& other)
+{
+    if(this == &other) return *this;
+
+    while (head != nullptr)
+        pop();
+
+    for(shared_node_obj curr = other.head; curr != nullptr; curr = curr->get_next())
+        push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true);
+
+    return *this;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator+(const DoublyLinkedList& other)
+{
+    DoublyLinkedList& lst {*this};
+
+    for(shared_node_obj curr = other.head; curr != nullptr; curr = curr->get_next())
+        lst.push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true);
+
+    return lst;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator+(const Product& other)
+{   
+    DoublyLinkedList& lst {*this};
+
+    lst.push((Product){other.get_name(), other.get_price(), other.get_supplier(), other.get_id()}, true);
+
+    return lst; 
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator-(const Product& other)
+{
+    DoublyLinkedList& lst {*this};
+
+    unsigned pos = lst.search(other);
+
+    std::cout << pos << std::endl;
+
+    if(pos == 128128128) return lst;
+
+    lst.remove(pos);
+
+    return lst;
 }

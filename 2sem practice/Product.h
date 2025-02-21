@@ -22,7 +22,7 @@ class Product
 
 public:
 
-    Product(const char*, unsigned int, _suppliers_);
+    Product(std::string, unsigned int, _suppliers_, unsigned);
     Product(const Product&);
 
     // Зона геттеров

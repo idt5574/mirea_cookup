@@ -3,6 +3,14 @@
 
 #include "node.cpp"
 
+enum _search_result_
+{
+    price,
+    id,
+    supplier,
+    position
+};
+
 class DoublyLinkedList
 {
     shared_node_obj head;
@@ -10,7 +18,7 @@ class DoublyLinkedList
 
 public:
 
-    DoublyLinkedList(const DoublyLinkedList& other) = delete;
+    DoublyLinkedList(const DoublyLinkedList& other);
 
     DoublyLinkedList(const Product& data)
     {
@@ -41,6 +49,13 @@ public:
     void traverse(bool);
 
     int length();
+
+    unsigned search(const Product& other);
+
+    const DoublyLinkedList& operator =(const DoublyLinkedList& other);
+    const DoublyLinkedList& operator +(const DoublyLinkedList& other);
+    const DoublyLinkedList& operator +(const Product& other);
+    const DoublyLinkedList& operator -(const Product& other);
 
 };
 
