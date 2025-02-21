@@ -7,6 +7,21 @@ DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other)
     *this = other;
 }
 
+DoublyLinkedList::DoublyLinkedList(const Product& data)
+{
+    head = std::make_shared<Node>(data);
+    tail.swap(head);
+}
+
+DoublyLinkedList::DoublyLinkedList(const Product& d1, const Product& d2)
+{
+    head = std::make_shared<Node>(d1);
+    tail = std::make_shared<Node>(d2);
+
+    head->set_next(tail);
+    tail->set_prev(head);
+}
+
 void DoublyLinkedList::push(const Product& data)
 {
     shared_node_obj new_node = std::make_shared<Node>(data);
@@ -203,7 +218,7 @@ unsigned DoublyLinkedList::search(const Product& other)
 
     curr.reset();
 
-    return 128128128;
+    return _cant_find_object_;
 }
 
 const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& other)
@@ -238,17 +253,53 @@ const DoublyLinkedList& DoublyLinkedList::operator+(const Product& other)
     return lst; 
 }
 
+const DoublyLinkedList& DoublyLinkedList::operator -(const DoublyLinkedList& other)
+{
+    DoublyLinkedList& lst {*this};
+
+    shared_node_obj curr = other.head;
+
+    for(; curr != nullptr; curr = curr->get_next())
+    {
+        unsigned pos = lst.search((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()});
+        
+        if(pos == _cant_find_object_)
+            continue;
+        
+        lst.remove(pos);
+    }
+
+    curr.reset();
+
+    return lst;
+}
+
 const DoublyLinkedList& DoublyLinkedList::operator-(const Product& other)
 {
     DoublyLinkedList& lst {*this};
 
     unsigned pos = lst.search(other);
 
-    std::cout << pos << std::endl;
-
-    if(pos == 128128128) return lst;
+    if(pos == _cant_find_object_) return lst;
 
     lst.remove(pos);
 
     return lst;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator+=(const DoublyLinkedList& other)
+{
+    shared_node_obj curr = other.head;
+
+    for(; curr != nullptr; curr = curr->get_next())
+        push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true);
+
+    return *this;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator+=(const Product& other)
+{
+    push(other, true);
+
+    return *this;
 }

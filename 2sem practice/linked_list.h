@@ -11,6 +11,11 @@ enum _search_result_
     position
 };
 
+enum _extra_return_values_
+{
+    _cant_find_object_ = 128128128
+};
+
 class DoublyLinkedList
 {
     shared_node_obj head;
@@ -18,22 +23,11 @@ class DoublyLinkedList
 
 public:
 
-    DoublyLinkedList(const DoublyLinkedList& other);
+    DoublyLinkedList(const DoublyLinkedList&);
 
-    DoublyLinkedList(const Product& data)
-    {
-        head = std::make_shared<Node>(data);
-        tail.swap(head);
-    }
+    DoublyLinkedList(const Product&);
 
-    DoublyLinkedList(const Product& d1, const Product& d2)
-    {
-        head = std::make_shared<Node>(d1);
-        tail = std::make_shared<Node>(d2);
-
-        head->set_next(tail);
-        tail->set_prev(head);
-    }
+    DoublyLinkedList(const Product&, const Product&);
 
     void push(const Product&);
     void push(const Product&, bool);
@@ -50,12 +44,21 @@ public:
 
     int length();
 
-    unsigned search(const Product& other);
+    unsigned search(const Product&);
 
-    const DoublyLinkedList& operator =(const DoublyLinkedList& other);
-    const DoublyLinkedList& operator +(const DoublyLinkedList& other);
-    const DoublyLinkedList& operator +(const Product& other);
-    const DoublyLinkedList& operator -(const Product& other);
+    const DoublyLinkedList& operator =(const DoublyLinkedList&);
+
+    const DoublyLinkedList& operator +(const DoublyLinkedList&);
+    const DoublyLinkedList& operator +(const Product&);
+
+    const DoublyLinkedList& operator -(const DoublyLinkedList&);
+    const DoublyLinkedList& operator -(const Product&);
+
+    const DoublyLinkedList& operator +=(const DoublyLinkedList&);
+    const DoublyLinkedList& operator +=(const Product&);
+
+    const DoublyLinkedList& operator -=(const DoublyLinkedList&);
+    const DoublyLinkedList& operator -=(const Product&);
 
 };
 
