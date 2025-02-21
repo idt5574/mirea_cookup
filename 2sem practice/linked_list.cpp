@@ -149,6 +149,9 @@ shared_node_obj DoublyLinkedList::remove(int pos)
 
     if(curr->get_next())
         curr->get_next()->set_prev(curr->get_prev());
+
+    if(head == curr)
+        head = curr->get_next();
     
     curr.reset();
 
@@ -294,12 +297,42 @@ const DoublyLinkedList& DoublyLinkedList::operator+=(const DoublyLinkedList& oth
     for(; curr != nullptr; curr = curr->get_next())
         push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true);
 
+    curr.reset();
+
     return *this;
 }
 
 const DoublyLinkedList& DoublyLinkedList::operator+=(const Product& other)
 {
     push(other, true);
+
+    return *this;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator-=(const DoublyLinkedList& other)
+{
+    shared_node_obj curr = other.head;
+ 
+    for(; curr != nullptr && head != nullptr; curr = curr->get_next())
+    {
+        unsigned pos = search((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()});
+
+        if(pos == _cant_find_object_) continue;
+        remove(pos);
+    }
+
+    curr.reset();
+
+    return *this;
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator-=(const Product& other)
+{
+    unsigned pos = search(other);
+
+    if(pos == _cant_find_object_) return *this;
+
+    remove(pos);
 
     return *this;
 }
