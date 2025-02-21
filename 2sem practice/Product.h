@@ -22,22 +22,26 @@ class Product
 
 public:
 
+    // Constructors
+
     Product(std::string, unsigned int, _suppliers_, unsigned);
     Product(const Product&);
 
-    // Зона геттеров
+    // Setters
 
-    unsigned get_id() const { return id; }
-    const std::string& get_name() const { return nameplate; }
-    unsigned get_price() const { return cost_price; }
-    _suppliers_ get_supplier() const { return sup; }
+    void set_price(unsigned);
+    void set_supplier(_suppliers_);
+    void set_name(const char*);
 
-    // Зона сеттеров
+    // Getters
 
-    void set_price(unsigned new_price) { cost_price = new_price; }
-    void set_supplier(_suppliers_ new_sup) { sup = new_sup; }
-    void set_name(const char* new_name) { nameplate = new_name; }
+    unsigned get_id() const;
+    const std::string& get_name() const;
+    unsigned get_price() const;
+    _suppliers_ get_supplier() const;
     
+    // Destructor
+
     ~Product() {}
 
 };

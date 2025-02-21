@@ -18,3 +18,25 @@ Product::Product(const Product& other)
     sup = other.sup;
     id = other.get_id();
 }
+
+void Product::set_price(unsigned new_price)
+{ cost_price = new_price; }
+
+void Product::set_supplier(_suppliers_ new_sup)
+{ sup = new_sup; }
+
+void Product::set_name(const char* new_name)
+{ nameplate = new_name; }
+
+unsigned Product::get_id() const
+{ return id; }
+
+const std::string& Product::get_name() const
+{ return nameplate; }
+
+unsigned Product::get_price() const
+{ return cost_price; }
+
+_suppliers_ Product::get_supplier() const
+{ return sup; }
+
