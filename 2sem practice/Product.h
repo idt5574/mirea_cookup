@@ -24,7 +24,7 @@ public:
 
     // Constructors
 
-    Product(std::string, unsigned int, _suppliers_, unsigned);
+    Product(std::string, unsigned, _suppliers_, unsigned);
     Product(const Product&);
 
     // Setters

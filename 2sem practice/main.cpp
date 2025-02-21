@@ -24,6 +24,6 @@ int main()
 
     std::cout << std::endl << "lst_2 -= lst_1" << std::endl;
     lst_2.traverse();
-    
+     
     return 0;
 }
