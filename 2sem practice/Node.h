@@ -29,10 +29,10 @@ public:
 
     // Getters
 
-    unsigned get_id(); 
+    const unsigned& get_id(); 
     const std::string& get_name();
-    unsigned get_price();
-    _suppliers_ get_supplier();
+    const unsigned& get_price();
+    const _suppliers_& get_supplier();
 
     std::shared_ptr<Node> get_prev();
     std::shared_ptr<Node> get_next();

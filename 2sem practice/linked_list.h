@@ -30,6 +30,8 @@ public:
 
     DoublyLinkedList(const Product&, const Product&);
 
+    DoublyLinkedList(const char*);
+
     void push(const Product&);
     void push(const Product&, bool);
 
@@ -61,6 +63,9 @@ public:
 
     const DoublyLinkedList& operator -=(const DoublyLinkedList&);
     const DoublyLinkedList& operator -=(const Product&);
+
+    bool save(const char*);
+    bool load(const char*);
 
 };
 

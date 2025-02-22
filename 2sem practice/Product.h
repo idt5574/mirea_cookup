@@ -35,10 +35,10 @@ public:
 
     // Getters
 
-    unsigned get_id() const;
+    const unsigned& get_id() const;
     const std::string& get_name() const;
-    unsigned get_price() const;
-    _suppliers_ get_supplier() const;
+    const unsigned& get_price() const;
+    const _suppliers_& get_supplier() const;
     
     // Destructor
 

@@ -22,16 +22,16 @@ void Node::set_next(std::shared_ptr<Node> n)
 void Node::set_prev(std::shared_ptr<Node> n)
 { prev.swap(n); };
 
-unsigned Node::get_id()
+const unsigned& Node::get_id()
 { return data->get_id(); }
 
 const std::string& Node::get_name()
 { return data->get_name(); }
 
-unsigned Node::get_price()
+const unsigned& Node::get_price()
 { return data->get_price(); }
 
-_suppliers_ Node::get_supplier()
+const _suppliers_& Node::get_supplier()
 { return data->get_supplier(); }
 
 shared_node_obj Node::get_prev()

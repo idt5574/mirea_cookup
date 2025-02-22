@@ -1,6 +1,8 @@
 #include "linked_list.h"
 
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other)
 {
@@ -20,6 +22,11 @@ DoublyLinkedList::DoublyLinkedList(const Product& d1, const Product& d2)
 
     head->set_next(tail);
     tail->set_prev(head);
+}
+
+DoublyLinkedList::DoublyLinkedList(const char* f_name)
+{
+    load(f_name);
 }
 
 void DoublyLinkedList::push(const Product& data)
@@ -357,3 +364,70 @@ const DoublyLinkedList& DoublyLinkedList::operator-=(const Product& other)
 
     return *this;
 }
+
+bool DoublyLinkedList::save(const char* file_name)
+{
+    std::ofstream ofs(file_name, std::ios::out | std::ios::binary);
+    if (!ofs.is_open()) {
+        std::cout << "ERROR: File " << file_name << " wasn't opened for writing.\n";
+        return false;
+    }
+
+    shared_node_obj curr = head;
+    int len = length();
+    ofs.write((char*)&len, sizeof(int));
+
+    while (curr != nullptr)
+    {
+        ofs.write((char*)&curr->get_id(), sizeof(unsigned));
+
+        int s = curr->get_name().size();
+        ofs.write((char*)&s, sizeof(int));
+        ofs.write(curr->get_name().c_str(), s);
+        ofs.write((char*)&curr->get_price(), sizeof(unsigned));
+        ofs.write((char*)&curr->get_supplier(), sizeof(_suppliers_));
+
+        curr = curr->get_next();
+    }
+    
+    ofs.close();
+    return true;
+}
+
+bool DoublyLinkedList::load(const char* file_name)
+{
+    std::ifstream ifs(file_name, std::ios::in | std::ios::binary);
+    if (!ifs.is_open()) {
+        std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n";
+        return false;
+    }
+
+    int len;
+    ifs.read((char*)&len, sizeof(int));
+
+    // Временно используем указатели для чтения данных
+    for (int i = 0; i < len; i++)
+    {
+        unsigned id;
+        int name_len;
+        ifs.read((char*)&id, sizeof(unsigned));
+
+        ifs.read((char*)&name_len, sizeof(int));
+
+        // Используем временный массив для имени
+        std::vector<char> name(name_len + 1); // Один байт под нулевой символ
+        ifs.read(name.data(), name_len);
+        name[name_len] = '\0';  // Добавляем нулевой символ в конец строки
+
+        unsigned price;
+        _suppliers_ supplier;
+        ifs.read((char*)&price, sizeof(unsigned));
+        ifs.read((char*)&supplier, sizeof(_suppliers_));
+
+        push(Product(name.data(), price, supplier, id));
+    }
+
+    ifs.close();
+    return true;
+}
+
