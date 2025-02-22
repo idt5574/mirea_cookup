@@ -45,14 +45,9 @@ void DoublyLinkedList::push(const Product& data, bool inEnd)
         head = new_node;
     else
     {
-        shared_node_obj curr = head;
-        while (curr->get_next() != nullptr)
-            curr = curr->get_next();
-        
-        curr->set_next(new_node);
-        new_node->set_prev(curr);
-
-        curr.reset();
+        new_node->set_prev(tail);
+        tail->set_next(new_node);
+        tail = new_node;
     }
 
     new_node.reset();
@@ -185,8 +180,34 @@ void DoublyLinkedList::traverse(bool isBackward)
 
     while (curr != nullptr)
     {
-        std::cout << curr->get_name() << std::endl;
+        std::cout << curr->get_id() << ' ' << curr->get_name() << ' ' << curr->get_price() << ' ' << curr->get_supplier() << std::endl;
         curr = curr->get_prev();
+    }
+
+    std::cout << "END" << std::endl;
+
+    curr.reset();
+}
+
+void DoublyLinkedList::traverse(const char* str, bool isBackward=false)
+{
+    bool output_id = strstr(str, "ID") != nullptr,
+        output_name = strstr(str, "NAME") != nullptr,
+        output_price = strstr(str, "PRICE") != nullptr,
+        output_supplier = strstr(str, "SUPPLIER") != nullptr,
+        out = output_id || output_name || output_price || output_supplier;
+
+    shared_node_obj curr = isBackward ? tail : head;
+
+    std::cout << "START" << std::endl;
+
+    for(; curr != nullptr && out; curr = (isBackward ? curr->get_prev() : curr->get_next()))
+    {
+        if(output_id) std::cout << curr->get_id() << ' ';
+        if(output_name) std::cout << curr->get_name() << ' ';
+        if(output_price) std::cout << curr->get_price() << ' ';
+        if(output_supplier) std::cout << curr->get_supplier();
+        std::cout << std::endl;
     }
 
     std::cout << "END" << std::endl;

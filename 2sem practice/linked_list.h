@@ -2,6 +2,7 @@
 #define _LINKED_LIST_H_
 
 #include "node.cpp"
+#include <cstring>
 
 enum _search_result_
 {
@@ -41,6 +42,7 @@ public:
 
     void traverse();
     void traverse(bool);
+    void traverse(const char*, bool);
 
     int length();
 
