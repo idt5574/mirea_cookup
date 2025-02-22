@@ -1,16 +1,18 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-#include "Product.cpp"
+#include "Product.cpp" // Копируем именно .cpp файл, тк если скопируем сюда заголовочный файл - не получим реализаций методов
 
 #include <memory>
 
+// Класс ноды (элемента связного списка)
+
 class Node
 {
-    shared_product_obj data;
+    shared_product_obj data; // Умный указатель (см. Product.h)
 
-    std::shared_ptr<Node> prev {nullptr};
-    std::shared_ptr<Node> next {nullptr};
+    std::shared_ptr<Node> prev {nullptr}; // Умный указатель на предыдущую ноду
+    std::shared_ptr<Node> next {nullptr}; // Умный указатель на следующую ноду
 
 public:
 

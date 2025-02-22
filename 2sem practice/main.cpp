@@ -9,6 +9,5 @@ int main()
 
     lst_3.traverse();
 
-     
     return 0;
 }

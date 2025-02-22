@@ -3,6 +3,8 @@
 
 #include <string>
 
+// Перечень имён для поставщиков
+
 enum _suppliers_ {
     bratyxi_42,
     rnb_club,
@@ -10,6 +12,8 @@ enum _suppliers_ {
     double_r,
     unknown_supplier
 };
+
+// Класс продукта
 
 class Product
 {
@@ -39,7 +43,11 @@ public:
     const std::string& get_name() const;
     const unsigned& get_price() const;
     const _suppliers_& get_supplier() const;
-    
+
+    // Refunded operators
+
+    const Product& operator=(const Product&);
+
     // Destructor
 
     ~Product() {}

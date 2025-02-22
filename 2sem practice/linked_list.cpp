@@ -4,18 +4,18 @@
 #include <fstream>
 #include <vector>
 
-DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other)
+DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other) // Копирование связного списка
 {
     *this = other;
 }
 
-DoublyLinkedList::DoublyLinkedList(const Product& data)
+DoublyLinkedList::DoublyLinkedList(const Product& data) // Создание связного списка только с одной переданной нодой
 {
     head = std::make_shared<Node>(data);
     tail.swap(head);
 }
 
-DoublyLinkedList::DoublyLinkedList(const Product& d1, const Product& d2)
+DoublyLinkedList::DoublyLinkedList(const Product& d1, const Product& d2) // Создание связного списка с двумя переданными нодами
 {
     head = std::make_shared<Node>(d1);
     tail = std::make_shared<Node>(d2);
@@ -24,75 +24,78 @@ DoublyLinkedList::DoublyLinkedList(const Product& d1, const Product& d2)
     tail->set_prev(head);
 }
 
-DoublyLinkedList::DoublyLinkedList(const char* f_name)
+DoublyLinkedList::DoublyLinkedList(const char* f_name) // Загрузка связного списка из файла
 {
     load(f_name);
 }
 
-void DoublyLinkedList::push(const Product& data)
+void DoublyLinkedList::push(const Product& data) // Добавление элемента в начало списка
 {
-    shared_node_obj new_node = std::make_shared<Node>(data);
+    shared_node_obj new_node = std::make_shared<Node>(data); // Новая нода (создаётся указатель и сразу привязывается к объекту new_node)
 
-    new_node->set_next(head);
+    new_node->set_next(head); // Сразу присваиваем голову списка следующей для новой ноды
 
-    if(head != nullptr) 
+    if(head != nullptr) // Если голова существует - ставим её предыдущей нодой новую
         head->set_prev(new_node);
 
-    head = new_node;
-    new_node.reset();
+    head = new_node; // Заменяем указатель головы на новую ноду
+    new_node.reset(); // Отвязываем новую ноду от созданного объекта
 }
 
-void DoublyLinkedList::push(const Product& data, bool inEnd)
+void DoublyLinkedList::push(const Product& data, bool inEnd) // Добавление элемента в конец списка
 {
-    if(!inEnd) return push(data);
+    if(!inEnd) return push(data); // Если inEnd == false - начинаем процесс добавления в начало списка
 
-    shared_node_obj new_node = std::make_shared<Node>(data);
+    shared_node_obj new_node = std::make_shared<Node>(data); // Новая нода (создаётся указатель и сразу привязывается к объекту new_node)
 
-    if(head == nullptr)
+    if(head == nullptr) // Если головы не существует, сразу привязываем к ней новый указатель
         head = new_node;
-    else
+    else // иначе
     {
-        new_node->set_prev(tail);
-        tail->set_next(new_node);
-        tail = new_node;
+        new_node->set_prev(tail); // Ставим хвост списка предыдущим элементом для новой ноды
+        tail->set_next(new_node); // Новую ноду ставим следующим элементом для хвоста
+        tail = new_node; // Перепривязываем объект хвоста к новой ноде
     }
 
-    new_node.reset();
+    new_node.reset(); // Отвязываем новую ноду от созданного объекта
 }
 
-void DoublyLinkedList::insert(const Product& data, int pos)
+void DoublyLinkedList::insert(const Product& data, int pos) // Добавление элемента на любую позицию внутри списка
 {
-    if(pos < 0)
+    if(pos < 0) // Если позиция меньше нуля - добавить не может
     {
         std::cout << "ERROR! Invalid insertion position\n";
         return;
     }
 
-    if(pos == 0) return push(data);
+    if(pos == 0) return push(data); // Если позиция равна нулю - просто добавляем объект в начало
 
-    shared_node_obj curr = head;
-    int count {0};
+    shared_node_obj curr = head; // Привязываем указатель головы к объекту curr
+    int count {0}; // Счётчик позиций
 
-    while (count < pos - 1 && curr != nullptr)
+    while (count < pos - 1 && curr != nullptr) // Выполняется до момента пока не дойдём до пред-позиции, либо пока curr не будет привязан к нулевому указателю
     {
-        curr = curr->get_next();
-        count++;
+        curr = curr->get_next(); // Привязываем объекту curr следующий элемент списка
+        count++; // Увеличиваем на 1 счетчик
     }
     
-    if(curr == nullptr)
+    if(curr == nullptr) // Если curr привязан к нулевому указателю - значит позиция находится за границами списка
     {
         std::cout << "ERROR! Invalid insertion position\n";
         return;
     }
 
-    shared_node_obj temp = std::make_shared<Node>(data);
-    temp->set_next(curr->get_next());
-    temp->set_prev(curr);
+    shared_node_obj temp = std::make_shared<Node>(data); // Новая нода (создаётся указатель и сразу привязывается к объекту new_node)
 
-    curr->get_next()->set_prev(temp);
-    curr->set_next(temp);
+    temp->set_next(curr->get_next()); // Для новой ноды следующей ставим следующую от пред позиции
+    temp->set_prev(curr); // Предыдущей - пред-позицию
 
-    temp.reset();
+    curr->get_next()->set_prev(temp); // Для следующей ноды от пред-позиции предыдущую ставим новой
+    curr->set_next(temp); // Следующей нодой пред-позиции ставим новую
+
+    // Отвязываем указатели от созданных внутри метода объектов
+    
+    temp.reset(); 
     curr.reset();
 }
 
