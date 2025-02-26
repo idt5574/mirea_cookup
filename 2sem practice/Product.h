@@ -22,22 +22,20 @@ class Product
     unsigned cost_price {0};
     _suppliers_ sup {unknown_supplier};
 
-    static unsigned next_id;
-
 public:
 
     // Конструкторы
 
-    Product(); // По умолчанию
     Product(const Product&); // Копирования
     Product(Product&& move); // Перемещения
-    Product(std::string, unsigned, _suppliers_, unsigned); // Преобразования
+    Product(unsigned, std::string, unsigned, _suppliers_); // Преобразования + по умолчанию
 
     // Setters
 
     void set_price(unsigned);
     void set_supplier(_suppliers_);
     void set_name(const char*);
+    void set_id(unsigned);
 
     // Getters
 
