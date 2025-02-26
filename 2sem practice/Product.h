@@ -17,7 +17,7 @@ enum _suppliers_ {
 
 class Product
 {
-    unsigned id;
+    unsigned id {0};
     std::string nameplate;
     unsigned cost_price {0};
     _suppliers_ sup {unknown_supplier};
@@ -26,10 +26,12 @@ class Product
 
 public:
 
-    // Constructors
+    // Конструкторы
 
-    Product(std::string, unsigned, _suppliers_, unsigned);
-    Product(const Product&);
+    Product(); // По умолчанию
+    Product(const Product&); // Копирования
+    Product(Product&& move); // Перемещения
+    Product(std::string, unsigned, _suppliers_, unsigned); // Преобразования
 
     // Setters
 
@@ -47,6 +49,7 @@ public:
     // Refunded operators
 
     const Product& operator=(const Product&);
+    const Product& operator=(Product&&);
 
     // Destructor
 
