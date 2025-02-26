@@ -20,7 +20,11 @@ public:
 
     // Конструкторы
 
+    DoublyLinkedList();
+
     DoublyLinkedList(const DoublyLinkedList&);
+
+    DoublyLinkedList(DoublyLinkedList&&);
 
     DoublyLinkedList(const Product&);
 
@@ -63,7 +67,10 @@ public:
 
     unsigned search(const Product&); // Поиск конкретного объекта в связном списке
 
+    void clear();
+
     const DoublyLinkedList& operator =(const DoublyLinkedList&); // Переопределение операции присваивания связных списков
+    const DoublyLinkedList& operator =(DoublyLinkedList&&);
 
     const DoublyLinkedList& operator +(const DoublyLinkedList&); // Позволяет получить конкатенацию двух списков
     const DoublyLinkedList& operator +(const Product&); // Позволяет получить конкатенацию списка и продукта
@@ -79,7 +86,7 @@ public:
 
     bool save(const char*); // Сохранение списка в файл
     bool load(const char*); // Загрузка списка в файл
-    /* Если список не пустой, то объекты будут добавляться справа, ничего удалего из не будет*/
+    /* Если список не пустой, то объекты будут добавляться справа, ничего удалено из не будет*/
 };
 
 #endif

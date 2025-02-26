@@ -4,9 +4,28 @@
 #include <fstream>
 #include <vector>
 
+DoublyLinkedList::DoublyLinkedList()
+{
+    push(Product());
+}
+
 DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other) // Копирование связного списка
 {
-    *this = other; // Копирование доступно благодаря переопрелённой операции присваивания
+    shared_node_obj curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
+
+    for(; curr != nullptr; curr = curr->get_next()) // Пока указатель "текущего" объекта не будет равен нулевому, перебираем все элементы прибавляемого списка
+        push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true); // Добавляем новые элементы в конец текущего списка
+
+    curr.reset(); // Отвязываем указатель от "текущего" объекта
+}
+
+DoublyLinkedList::DoublyLinkedList(DoublyLinkedList&& move)
+{
+    head = move.head;
+    tail = move.tail;
+
+    move.head.reset();
+    move.tail.reset();  
 }
 
 DoublyLinkedList::DoublyLinkedList(const Product& data) // Создание связного списка только с одной переданной нодой
@@ -257,17 +276,37 @@ unsigned DoublyLinkedList::search(const Product& other) // Поиск строг
     return _cant_find_object_; // Возвращаем спец. значение для ненайденного объекта
 }
 
-const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& other) // Переопределение оператора присваивания
+void DoublyLinkedList::clear()
+{
+    while (head != nullptr) // Пока голова не будет равна нулевому указателю - удаляем все элементы списка
+        pop();
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& other) // Переопределение оператора присваивания копированием
 {
     if(this == &other) return *this; // Если указатели равны - ничего не делаем
 
-    while (head != nullptr) // Пока голова не будет равна нулевому указателю - удаляем все элементы списка
-        pop();
+    clear();
 
     for(shared_node_obj curr = other.head; curr != nullptr; curr = curr->get_next()) // Переносим все элементы списка other в текущий
         push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true); // Вставка в конец
 
     return *this; // Возвращаем копию (константную ссылку) текущего объекта
+}
+
+const DoublyLinkedList& DoublyLinkedList::operator =(DoublyLinkedList&& move) // Переопределение оператора присваивания перемещением
+{
+    if(this == &move) return *this;
+
+    clear();
+
+    head = move.head;
+    tail = move.tail;
+
+    move.head.reset();
+    move.tail.reset();
+
+    return *this;
 }
 
 const DoublyLinkedList& DoublyLinkedList::operator+(const DoublyLinkedList& other) // Переопределение оператора суммирования для двух связных списков
