@@ -72,13 +72,21 @@ shared_node_obj Node::get_next() // Геттер следующего объек
 
 const Node& Node::operator=(const Node& other)
 {
+    if(this == &other) return *this;
+
     data = other.data;
+
+    return *this;
 }
 
 const Node& Node::operator=(Node&& move)
 {
+    if(this == &move) return *this;
+
     data = move.data;
     move.data = Product();
+
+    return *this;
 }
 
 Node::~Node() // Деструктор
