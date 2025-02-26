@@ -14,7 +14,7 @@ DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other) // Копир�
     shared_node_obj curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
 
     for(; curr != nullptr; curr = curr->get_next()) // Пока указатель "текущего" объекта не будет равен нулевому, перебираем все элементы прибавляемого списка
-        push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true); // Добавляем новые элементы в конец текущего списка
+        push((Product){curr->get_id(), curr->get_name(), curr->get_price(), curr->get_supplier()}, true); // Добавляем новые элементы в конец текущего списка
 
     curr.reset(); // Отвязываем указатель от "текущего" объекта
 }
@@ -289,7 +289,7 @@ const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& oth
     clear();
 
     for(shared_node_obj curr = other.head; curr != nullptr; curr = curr->get_next()) // Переносим все элементы списка other в текущий
-        push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true); // Вставка в конец
+        push((Product){curr->get_id(), curr->get_name(), curr->get_price(), curr->get_supplier()}, true); // Вставка в конец
 
     return *this; // Возвращаем копию (константную ссылку) текущего объекта
 }
@@ -314,7 +314,7 @@ const DoublyLinkedList& DoublyLinkedList::operator+(const DoublyLinkedList& othe
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
     for(shared_node_obj curr = other.head; curr != nullptr; curr = curr->get_next()) // Проходим весь список other
-        lst.push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true); // Поочерёдно добавляя каждый элемент в конец "нового" списка
+        lst.push((Product){curr->get_id(), curr->get_name(), curr->get_price(), curr->get_supplier()}, true); // Поочерёдно добавляя каждый элемент в конец "нового" списка
 
     return lst; // Возвращаем полученный связный список
 }
@@ -323,7 +323,7 @@ const DoublyLinkedList& DoublyLinkedList::operator+(const Product& other) // П�
 {   
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
-    lst.push((Product){other.get_name(), other.get_price(), other.get_supplier(), other.get_id()}, true); // Добавляем новый продукт в конец
+    lst.push((Product){other.get_id(), other.get_name(), other.get_price(), other.get_supplier()}, true); // Добавляем новый продукт в конец
 
     return lst; // Возвращаем новый список
 }
@@ -336,7 +336,7 @@ const DoublyLinkedList& DoublyLinkedList::operator -(const DoublyLinkedList& oth
 
     for(; curr != nullptr; curr = curr->get_next()) // Далее, пока "текущий" объект не равен нулевому, перебираем все элементы вычитаемого списка
     {
-        unsigned pos = lst.search((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}); // Проверяем, есть ли в текущем списке "текущий" объект
+        unsigned pos = lst.search((Product){curr->get_id(), curr->get_name(), curr->get_price(), curr->get_supplier()}); // Проверяем, есть ли в текущем списке "текущий" объект
         
         if(pos == _cant_find_object_) // Если нет - переходим к следующему элементу перебора
             continue;
@@ -367,7 +367,7 @@ const DoublyLinkedList& DoublyLinkedList::operator+=(const DoublyLinkedList& oth
     shared_node_obj curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
 
     for(; curr != nullptr; curr = curr->get_next()) // Пока указатель "текущего" объекта не будет равен нулевому, перебираем все элементы прибавляемого списка
-        push((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}, true); // Добавляем новые элементы в конец текущего списка
+        push((Product){curr->get_id(), curr->get_name(), curr->get_price(), curr->get_supplier()}, true); // Добавляем новые элементы в конец текущего списка
 
     curr.reset(); // Отвязываем указатель от "текущего" объекта
 
@@ -387,7 +387,7 @@ const DoublyLinkedList& DoublyLinkedList::operator-=(const DoublyLinkedList& oth
  
     for(; curr != nullptr && head != nullptr; curr = curr->get_next()) // Пока голова текущего списка, либо пока указатель "текущего" объекта не будут равны нулевому объекту, перебираем все элементы вычитаемого списка
     {
-        unsigned pos = search((Product){curr->get_name(), curr->get_price(), curr->get_supplier(), curr->get_id()}); // Ищем "текущий" объект в текущем списке
+        unsigned pos = search((Product){curr->get_id(), curr->get_name(), curr->get_price(), curr->get_supplier()}); // Ищем "текущий" объект в текущем списке
 
         if(pos == _cant_find_object_) continue; // Если нет - переходим к следующему объекту
         remove(pos); // Иначе удаляем из текущего списка "текущий" объект
@@ -467,7 +467,7 @@ bool DoublyLinkedList::load(const char* file_name) // Метод для счит
         ifs.read((char*)&price, sizeof(unsigned)); // Считываем из бинарного файла цену объекта
         ifs.read((char*)&supplier, sizeof(_suppliers_)); // Считываем из бинарного файла поставщика объекта
 
-        push(Product(name.data(), price, supplier, id), true); // Добавляем в текущий связный список продукт, со считанными из бинарного файла данными (объект добавляется в конец)
+        push(Product(id, name.data(), price, supplier), true); // Добавляем в текущий связный список продукт, со считанными из бинарного файла данными (объект добавляется в конец)
     }
 
     ifs.close(); // Закрываем файловый поток
