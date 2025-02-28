@@ -1,6 +1,6 @@
 #include "Product.h" // Копируем информацию из заголовочного файла
 #include <iostream> 
-#include <cstring> // Для стандартных функций работы со стоками языка Си (аналог string.h) 
+#include <cstring> // Для стандартных функций работы со стоками языка Си (аналог string.h) ~
 
 /* shared_ptr - один из видов умных указателей в языке с++.
     Указатель типа shared_ptr берёт на себя ответственность за то, чтоб
@@ -30,11 +30,11 @@ Product::Product(Product&& move)
 
 // Конструктор преобразования (данные разных типов преобразует в наш класс) + конструктор по умолчанию
 
-Product::Product(unsigned id=0, std::string nameplate="unnamed", unsigned cost=0, _suppliers_ sup=unknown_supplier)
+Product::Product(unsigned id=0, std::string nameplate="unnamed", double cost=0, _suppliers_ sup=unknown_supplier)
 : id(id), nameplate(nameplate), cost_price(cost), sup(sup)
 {}
 
-void Product::set_price(unsigned new_price) // Установка цены
+void Product::set_price(double new_price) // Установка цены
 { cost_price = new_price; }
 
 void Product::set_supplier(_suppliers_ new_sup) // Установка поставщика
@@ -52,7 +52,7 @@ const unsigned& Product::get_id() const // Получение айдишника
 const std::string& Product::get_name() const // Получение имени
 { return nameplate; }
 
-const unsigned& Product::get_price() const // Получение цены
+const double& Product::get_price() const // Получение цены
 { return cost_price; }
 
 const _suppliers_& Product::get_supplier() const // Получение поставщика (тк enum - возвращаемое значение - число)

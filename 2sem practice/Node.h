@@ -27,7 +27,7 @@ public:
     // Setters
 
     void set_nameplate(const char*);
-    void set_price(unsigned);
+    void set_price(double);
     void set_supplier(_suppliers_);
 
     void set_next(std::shared_ptr<Node>);
@@ -37,7 +37,7 @@ public:
 
     const unsigned& get_id(); 
     const std::string& get_name();
-    const unsigned& get_price();
+    const double& get_price();
     const _suppliers_& get_supplier();
 
     std::shared_ptr<Node> get_prev();
@@ -49,6 +49,18 @@ public:
 
     const Node& operator=(const Node&);
     const Node& operator=(Node&&);
+
+    const Node& operator=(double);
+    const Node& operator=(unsigned);
+    const Node& operator=(_suppliers_);
+    const Node& operator=(const char*);
+    const Node& operator=(const Product&);
+
+    operator double();
+    operator unsigned();
+    operator _suppliers_();
+    operator std::string();
+    operator Product();
 
     // Destructor
 

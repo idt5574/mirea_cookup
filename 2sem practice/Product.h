@@ -19,7 +19,7 @@ class Product
 {
     unsigned id {0};
     std::string nameplate;
-    unsigned cost_price {0};
+    double cost_price {0};
     _suppliers_ sup {unknown_supplier};
 
 public:
@@ -28,11 +28,11 @@ public:
 
     Product(const Product&); // Копирования
     Product(Product&& move); // Перемещения
-    Product(unsigned, std::string, unsigned, _suppliers_); // Преобразования + по умолчанию
+    Product(unsigned, std::string, double, _suppliers_); // Преобразования + по умолчанию
 
     // Setters
 
-    void set_price(unsigned);
+    void set_price(double);
     void set_supplier(_suppliers_);
     void set_name(const char*);
     void set_id(unsigned);
@@ -41,7 +41,7 @@ public:
 
     const unsigned& get_id() const;
     const std::string& get_name() const;
-    const unsigned& get_price() const;
+    const double& get_price() const;
     const _suppliers_& get_supplier() const;
 
     // Refunded operators

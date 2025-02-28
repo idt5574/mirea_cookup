@@ -9,12 +9,22 @@ enum _extra_return_values_ // Особые значения, которые бу
     _cant_find_object_ = 128128128
 };
 
+enum class _sort_parameters_
+{
+    id,
+    name,
+    price,
+    supplier
+};
+
 // Класс двусвязного списка
 
 class DoublyLinkedList
 {
     shared_node_obj head; // Умный указатель на голову (первый объект связного списка)
     shared_node_obj tail; // Умный указатель на хвост (последний объект связного списка)
+
+    unsigned length {0};
 
 public:
 
@@ -44,6 +54,8 @@ public:
 
     shared_node_obj remove(int); // Удаление объекта под любым индексом в пределах текущих грациц списка
 
+    unsigned get_length();
+
     void traverse(); // Вывод списка в консоль
     void traverse(bool); // Ревёрс-вывод списка в консоль
     void traverse(const char*, bool); // Вывод определённых значений элементов списка в консоль
@@ -63,9 +75,13 @@ public:
         true - вывод в обратном порядке
     */
 
-    int length(); // Подсчёт длинны связного списка
+//    int length(); // Подсчёт длинны связного списка
 
     unsigned search(const Product&); // Поиск конкретного объекта в связном списке
+
+    const DoublyLinkedList& sort(_sort_parameters_, bool);
+
+    bool swap(unsigned, unsigned);
 
     void clear();
 
@@ -83,6 +99,8 @@ public:
 
     const DoublyLinkedList& operator -=(const DoublyLinkedList&); // Удаляет из текущего списка объекты из правого списка (если они есть в текущем)
     const DoublyLinkedList& operator -=(const Product&); // Удаляет из текущего списка продукт (если тот есть в списке)
+
+    Node& operator [] (unsigned); // В случае неверно выставленного индекса, будет передана голова списка
 
     bool save(const char*); // Сохранение списка в файл
     bool load(const char*); // Загрузка списка в файл

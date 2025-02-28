@@ -34,7 +34,7 @@ Node::Node(const Product& other) // Конструктор преобразов�
 void Node::set_nameplate(const char* n)
 { data.set_name(n); }
 
-void Node::set_price(unsigned p)
+void Node::set_price(double p)
 { data.set_price(p); }
 
 void Node::set_supplier(_suppliers_ s)
@@ -43,10 +43,10 @@ void Node::set_supplier(_suppliers_ s)
 // Конец вспомогательных сеттеров
 
 void Node::set_next(std::shared_ptr<Node> n) // Сеттер для следующего объекта
-{ next.swap(n); }
+{ next = n; }
 
 void Node::set_prev(std::shared_ptr<Node> n) // Сеттер для предыдущего объекта
-{ prev.swap(n); };
+{ prev = n; };
 
 // Далее идут вспомогательные геттеры, сделанные потому, что напрямую к объекту класса Product из объекта класса Node не можем
 
@@ -56,7 +56,7 @@ const unsigned& Node::get_id()
 const std::string& Node::get_name()
 { return data.get_name(); }
 
-const unsigned& Node::get_price()
+const double& Node::get_price()
 { return data.get_price(); }
 
 const _suppliers_& Node::get_supplier()
@@ -87,6 +87,61 @@ const Node& Node::operator=(Node&& move)
     move.data = Product();
 
     return *this;
+}
+
+const Node& Node::operator=(double data)
+{
+    this->data.set_price(data);
+    return *this;
+}
+
+const Node& Node::operator=(unsigned data)
+{
+    this->data.set_id(data);
+    return *this;
+}
+
+const Node& Node::operator=(_suppliers_ data)
+{
+    this->data.set_supplier(data);
+    return *this;
+}
+
+const Node& Node::operator=(const char* data)
+{
+    this->data.set_name(data);
+    return *this;
+}
+
+const Node& Node::operator=(const Product& data)
+{
+    this->data = data;
+    return *this;
+}
+
+Node::operator double()
+{
+    return data.get_price();
+}
+
+Node::operator unsigned()
+{
+    return data.get_id();
+}
+
+Node::operator _suppliers_()
+{
+    return data.get_supplier();
+}
+
+Node::operator std::string()
+{
+    return data.get_name();
+}
+
+Node::operator Product()
+{
+    return data;
 }
 
 Node::~Node() // Деструктор
