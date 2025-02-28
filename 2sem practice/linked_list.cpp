@@ -302,6 +302,18 @@ unsigned DoublyLinkedList::search(const Product& other) // Поиск строг
     return _cant_find_object_; // Возвращаем спец. значение для ненайденного объекта
 }
 
+bool DoublyLinkedList::swap(unsigned pos_1, unsigned pos_2)
+{
+    if(pos_1 >= length || pos_2 >= length) return false;
+
+    Product temp = (*this)[pos_1];
+
+    (*this)[pos_1] = (*this)[pos_2];
+    (*this)[pos_2] = temp;
+
+    return true;
+}
+
 void DoublyLinkedList::clear()
 {
     while (head != nullptr) // Пока голова не будет равна нулевому указателю - удаляем все элементы списка

@@ -20,7 +20,7 @@ int main()
 
     lst.traverse();
 
-    lst[5] = 100.0;
+    lst.swap(1, 11);
 
     lst.traverse();
 
