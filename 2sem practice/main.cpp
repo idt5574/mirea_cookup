@@ -20,9 +20,9 @@ int main()
 
     lst.traverse();
 
-    lst.swap(1, 11);
+    DoublyLinkedList lst_sublist = lst.sublist(100, 9);
 
-    lst.traverse();
+    lst_sublist.traverse();
 
     return 0;
 }

@@ -56,6 +56,35 @@ DoublyLinkedList::DoublyLinkedList(const char* f_name) // Загрузка св�
     load(f_name);
 }
 
+DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other, unsigned pos_1, unsigned pos_2)
+{
+    shared_node_obj curr = other.head;
+    int cnt {0};
+
+    while (cnt < pos_1 && curr != nullptr)
+    {
+        curr = curr->get_next();
+        cnt++;
+    }
+    
+
+    for(int i = pos_1; curr != nullptr && i < pos_2 + 1; i++, curr = curr->get_next())   
+        push(curr, true);
+}
+
+DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other, unsigned pos_1, unsigned pos_2, bool is_shared)
+{
+    if(!is_shared) DoublyLinkedList(other, pos_1, pos_2);
+    else
+    {
+        head = std::make_shared<Node> ();
+        tail = std::make_shared<Node> ();
+        isShared = true;
+    }
+
+    length = _count_length_for_shared_();
+}
+
 void DoublyLinkedList::push(const Product& data) // Добавление элемента в начало списка
 {
     shared_node_obj new_node = std::make_shared<Node>(data); // Новая нода (создаётся указатель и сразу привязывается к объекту new_node)
@@ -94,8 +123,64 @@ void DoublyLinkedList::push(const Product& data, bool inEnd) // Добавлен
     length++;
 }
 
+void DoublyLinkedList::push(shared_node_obj other)
+{
+    if(isShared) 
+    {
+        std::cout << "err: Can't push to shared list" << std::endl;
+        return;
+    }
+
+    shared_node_obj new_node = std::make_shared<Node> (*other);
+
+    new_node->set_next(head); // Сразу присваиваем голову списка следующей для новой ноды
+
+    if(head != nullptr) // Если голова существует - ставим её предыдущей нодой новую
+        head->set_prev(new_node);
+
+    head = new_node; // Заменяем указатель головы на новую ноду
+    new_node.reset(); // Отвязываем новую ноду от созданного объекта
+
+    length++;
+}
+
+void DoublyLinkedList::push(shared_node_obj other, bool is_end)
+{
+    if(isShared) 
+    {
+        std::cout << "err: Can't push to shared list" << std::endl;
+        return;
+    }
+
+    if(!is_end) return push(other);
+
+    shared_node_obj new_node = std::make_shared<Node>(other); // Новая нода (создаётся указатель и сразу привязывается к объекту new_node)
+
+    if(head == nullptr)
+    { // Если головы не существует, сразу привязываем к ней новый указатель
+        head = new_node;
+        tail = head;
+    }
+    else // иначе
+    {
+        new_node->set_prev(tail); // Ставим хвост списка предыдущим элементом для новой ноды
+        tail->set_next(new_node); // Новую ноду ставим следующим элементом для хвоста
+        tail = new_node; // Перепривязываем объект хвоста к новой ноде
+    }
+
+    new_node.reset(); // Отвязываем новую ноду от созданного объекта
+
+    length++;
+}
+
 void DoublyLinkedList::insert(const Product& data, int pos) // Добавление элемента на любую позицию внутри списка
 {
+    if(isShared) 
+    {
+        std::cout << "err: Can't insert into shared list" << std::endl;
+        return;
+    }
+
     if(pos < 0) // Если позиция меньше нуля - добавить не может
     {
         std::cout << "ERROR! Invalid insertion position\n";
@@ -137,6 +222,12 @@ void DoublyLinkedList::insert(const Product& data, int pos) // Добавлен�
 
 shared_node_obj DoublyLinkedList::pop() // Удаление объекта с конца
 {
+    if(isShared) 
+    {
+        std::cout << "err: Can't pop from shared list" << std::endl;
+        return head;
+    }
+
     if(head == nullptr) // Если голова имеет нулевой указатель - ничего не делаем
         return nullptr;
     
@@ -159,6 +250,12 @@ shared_node_obj DoublyLinkedList::pop() // Удаление объекта с к
 
 shared_node_obj DoublyLinkedList::pop(bool inStart) // Удаление объекта из начала
 {
+    if(isShared) 
+    {
+        std::cout << "err: Can't pop from shared list" << std::endl;
+        return head;
+    }
+
     if(!inStart) return pop(); // Если inStart == false - удаляем объект из конца
     
     if(head == nullptr) // Если голова имеет нулевой указатель - ничего не делаем
@@ -179,6 +276,12 @@ shared_node_obj DoublyLinkedList::pop(bool inStart) // Удаление объе
 
 shared_node_obj DoublyLinkedList::remove(int pos) // Удаление объекта из любой позиции в границах списка
 {
+    if(isShared) 
+    {
+        std::cout << "err: Can't remove from shared list" << std::endl;
+        return head;
+    }
+
     if(!head) return head; // Если указатель головы нулевой - ничего не делаем
 
     shared_node_obj curr = head; // Привязывам к новому объекту указатель головы
@@ -217,12 +320,32 @@ void DoublyLinkedList::traverse() // Вывод списка в консоль �
     {
         std::cout << curr->get_id() << ' ' << curr->get_name() << ' ' << curr->get_price() << ' ' << curr->get_supplier() << std::endl; // Выводим данные об объектах построчно
         curr = curr->get_next(); // Переприсваиваем указатель на следующий от текущего
+
+        if(isShared && curr == tail)
+            break;
     }
 
     std::cout << "END" << std::endl;
 
     curr.reset(); // Отвязываем указатель от нового объекта
 }
+
+unsigned DoublyLinkedList::_count_length_for_shared_()
+{
+    shared_node_obj curr = head;
+    unsigned len {0};
+
+    while (true) 
+    {
+        len++;
+        
+        if(curr == tail) break;
+
+        curr = curr->get_next();
+    } 
+
+    return len;
+}   
 
 void DoublyLinkedList::traverse(bool isBackward) // Вывод списка в консоль в обратном порядке
 {
@@ -236,6 +359,9 @@ void DoublyLinkedList::traverse(bool isBackward) // Вывод списка в �
     {
         std::cout << curr->get_id() << ' ' << curr->get_name() << ' ' << curr->get_price() << ' ' << curr->get_supplier() << std::endl; // Выводим данные об объектах построчно
         curr = curr->get_prev(); // Переприсваиваем указатель на предыдущий от текущего
+
+        if(isShared && curr == head)
+            break;
     }
 
     std::cout << "END" << std::endl;
@@ -262,6 +388,9 @@ void DoublyLinkedList::traverse(const char* str, bool isBackward=false) // Вы�
         if(output_price) std::cout << curr->get_price() << ' ';
         if(output_supplier) std::cout << curr->get_supplier();
         std::cout << std::endl;
+
+        if(isShared && curr == (isBackward ? tail : head))
+            break;
     }
 
     std::cout << "END" << std::endl;
@@ -295,11 +424,20 @@ unsigned DoublyLinkedList::search(const Product& other) // Поиск строг
 
         curr = curr->get_next(); // Если не нашли - продолжаем перебор
         pos++; // Увеличиваем позицию на 1
+
+        if(isShared && curr == tail)
+            break;
     }
 
     curr.reset(); // отвязываем от "текущего" объекта указатель
 
     return _cant_find_object_; // Возвращаем спец. значение для ненайденного объекта
+}
+
+DoublyLinkedList DoublyLinkedList::sublist(unsigned pos_1, unsigned pos_2)
+{
+    DoublyLinkedList sub_lst {*this, pos_1, pos_2};
+    return sub_lst;
 }
 
 bool DoublyLinkedList::swap(unsigned pos_1, unsigned pos_2)
@@ -322,6 +460,12 @@ void DoublyLinkedList::clear()
 
 const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& other) // Переопределение оператора присваивания копированием
 {
+    if(isShared)
+    {
+        std::cout << "err: can't assign to shared list" << std::endl;
+        return *this;
+    }
+
     if(this == &other) return *this; // Если указатели равны - ничего не делаем
 
     clear();
@@ -334,6 +478,12 @@ const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& oth
 
 const DoublyLinkedList& DoublyLinkedList::operator =(DoublyLinkedList&& move) // Переопределение оператора присваивания перемещением
 {
+    if(isShared)
+    {
+        std::cout << "err: can't assign to shared list" << std::endl;
+        return *this;
+    }
+
     if(this == &move) return *this;
 
     clear();
@@ -349,6 +499,12 @@ const DoublyLinkedList& DoublyLinkedList::operator =(DoublyLinkedList&& move) //
 
 const DoublyLinkedList& DoublyLinkedList::operator+(const DoublyLinkedList& other) // Переопределение оператора суммирования для двух связных списков
 {
+    if(isShared)
+    {
+        std::cout << "err: can't push to shared list" << std::endl;
+        return *this;
+    }
+
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
     for(shared_node_obj curr = other.head; curr != nullptr; curr = curr->get_next()) // Проходим весь список other
@@ -359,6 +515,12 @@ const DoublyLinkedList& DoublyLinkedList::operator+(const DoublyLinkedList& othe
 
 const DoublyLinkedList& DoublyLinkedList::operator+(const Product& other) // Переопределение операции суммирования для связного списка и продукта
 {   
+    if(isShared)
+    {
+        std::cout << "err: can't push to shared list" << std::endl;
+        return *this;
+    }
+
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
     lst.push((Product){other.get_id(), other.get_name(), other.get_price(), other.get_supplier()}, true); // Добавляем новый продукт в конец
@@ -368,6 +530,12 @@ const DoublyLinkedList& DoublyLinkedList::operator+(const Product& other) // П�
 
 const DoublyLinkedList& DoublyLinkedList::operator -(const DoublyLinkedList& other) // Переопределение операции вычитания для двух связных списков
 {
+    if(isShared)
+    {
+        std::cout << "err: can't pop from shared list" << std::endl;
+        return *this;
+    }
+
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
     shared_node_obj curr = other.head; // Новому "текущему" объекту привязываем указатель на голову вычитаемого списка
@@ -389,6 +557,12 @@ const DoublyLinkedList& DoublyLinkedList::operator -(const DoublyLinkedList& oth
 
 const DoublyLinkedList& DoublyLinkedList::operator-(const Product& other) // Переопределение операции вычитания для связного списка и продукта
 {
+    if(isShared)
+    {
+        std::cout << "err: can't pop from shared list" << std::endl;
+        return *this;
+    }
+
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
     unsigned pos = lst.search(other); // Проверяем, есть ли переданный продукт в текущем списке
@@ -402,6 +576,12 @@ const DoublyLinkedList& DoublyLinkedList::operator-(const Product& other) // П�
 
 const DoublyLinkedList& DoublyLinkedList::operator+=(const DoublyLinkedList& other) // Переопределение расширенной операции присваивания с суммированием для двух связных списков
 {
+    if(isShared)
+    {
+        std::cout << "err: can't push to shared list" << std::endl;
+        return *this;
+    }
+
     shared_node_obj curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
 
     for(; curr != nullptr; curr = curr->get_next()) // Пока указатель "текущего" объекта не будет равен нулевому, перебираем все элементы прибавляемого списка
@@ -414,6 +594,12 @@ const DoublyLinkedList& DoublyLinkedList::operator+=(const DoublyLinkedList& oth
 
 const DoublyLinkedList& DoublyLinkedList::operator+=(const Product& other) // Переопределение расширенной операции присваивания с суммированием для связного списка и продукта
 {
+    if(isShared)
+    {
+        std::cout << "err: can't push to shared list" << std::endl;
+        return *this;
+    }
+
     push(other, true); // Добавляем продукт в конец текущего списка
 
     return *this; // Возвращащаем копию изменённого (текущего) списка
@@ -421,6 +607,12 @@ const DoublyLinkedList& DoublyLinkedList::operator+=(const Product& other) // П
 
 const DoublyLinkedList& DoublyLinkedList::operator-=(const DoublyLinkedList& other) // Переопределение расширенной операции присваивания с вычитанием для двух связных списков
 {
+    if(isShared)
+    {
+        std::cout << "err: can't pop from shared list" << std::endl;
+        return *this;
+    }
+
     shared_node_obj curr = other.head; // Привязываем к новому "текущему" объекту указатель на голову вычитаемого списка
  
     for(; curr != nullptr && head != nullptr; curr = curr->get_next()) // Пока голова текущего списка, либо пока указатель "текущего" объекта не будут равны нулевому объекту, перебираем все элементы вычитаемого списка
@@ -438,6 +630,12 @@ const DoublyLinkedList& DoublyLinkedList::operator-=(const DoublyLinkedList& oth
 
 const DoublyLinkedList& DoublyLinkedList::operator-=(const Product& other) // Переопределение расширенной операции присваивания с вычитанием для связного списка и продукта
 {
+    if(isShared)
+    {
+        std::cout << "err: can't pop from shared list" << std::endl;
+        return *this;
+    }
+
     unsigned pos = search(other); // Ищем в текущем списке переданный продукт
 
     if(pos == _cant_find_object_) return *this; // Если нет - возвращаем копию текущего списка
@@ -481,6 +679,9 @@ bool DoublyLinkedList::save(const char* file_name) // Метод записи с
         ofs.write((char*)&curr->get_supplier(), sizeof(_suppliers_)); // Записываем в бинарный файл производителя объекта
 
         curr = curr->get_next(); // Переходим к следующему объекту (и так до последнего)
+
+        if(isShared && curr == tail)
+            break;
     }
     
     ofs.close(); // Закрываем файловый поток
@@ -520,4 +721,12 @@ bool DoublyLinkedList::load(const char* file_name) // Метод для счит
 
     ifs.close(); // Закрываем файловый поток
     return true; // Считывание прошло успешно - возвращаем true
+}
+
+DoublyLinkedList::~DoublyLinkedList()
+{
+    if(amount_of_sublists != 0)
+    {
+
+    }
 }

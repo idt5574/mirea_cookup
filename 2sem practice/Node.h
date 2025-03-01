@@ -23,6 +23,7 @@ public:
     Node(Node&&);
 
     Node(const Product&);
+    Node(std::shared_ptr<Node>&);
 
     // Setters
 
@@ -39,6 +40,7 @@ public:
     const std::string& get_name();
     const double& get_price();
     const _suppliers_& get_supplier();
+    const Product& get_product();
 
     std::shared_ptr<Node> get_prev();
     std::shared_ptr<Node> get_next();

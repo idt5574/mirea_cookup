@@ -29,6 +29,11 @@ Node::Node(const Product& other) // Конструктор преобразов�
     data = other; // Переопределённый оператор присваивания продукта (см. Product.cpp)
 }
 
+Node::Node(std::shared_ptr<Node>& other)
+{
+    data = other->get_product();
+}
+
 // Следующая часть сеттеров сделана потому, что напрямую к объекту класса Product из объекта класса Node не можем
 
 void Node::set_nameplate(const char* n)
@@ -61,6 +66,9 @@ const double& Node::get_price()
 
 const _suppliers_& Node::get_supplier()
 { return data.get_supplier(); }
+
+const Product& Node::get_product()
+{ return data; }
 
 // Конец вспомогательных геттеров
 

@@ -25,6 +25,17 @@ class DoublyLinkedList
     shared_node_obj tail; // Умный указатель на хвост (последний объект связного списка)
 
     unsigned length {0};
+    unsigned amount_of_sublists {0};
+
+    bool isShared {false};     
+
+    DoublyLinkedList(const DoublyLinkedList&, unsigned, unsigned);
+    DoublyLinkedList(const DoublyLinkedList&, unsigned, unsigned, bool);
+
+    void push(shared_node_obj);
+    void push(shared_node_obj, bool);
+
+    unsigned _count_length_for_shared_();
 
 public:
 
@@ -79,6 +90,8 @@ public:
 
     unsigned search(const Product&); // Поиск конкретного объекта в связном списке
 
+    DoublyLinkedList sublist(unsigned, unsigned);
+
     const DoublyLinkedList& sort(_sort_parameters_, bool);
 
     bool swap(unsigned, unsigned);
@@ -105,6 +118,8 @@ public:
     bool save(const char*); // Сохранение списка в файл
     bool load(const char*); // Загрузка списка в файл
     /* Если список не пустой, то объекты будут добавляться справа, ничего удалено из не будет*/
+
+    ~DoublyLinkedList();
 };
 
 #endif
