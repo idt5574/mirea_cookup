@@ -2,7 +2,7 @@
 
 #include "linked_list.cpp"
 
-int main()
+void _test_()
 {
     DoublyLinkedList lst {{}, {1, "Boots", 20000, bratyxi_42}};
 
@@ -20,9 +20,14 @@ int main()
 
     lst.traverse();
 
-    DoublyLinkedList lst_sublist = lst.sublist(100, 9);
+    DoublyLinkedList sub_lst = lst._get_shared_list_(2, 5);
 
-    lst_sublist.traverse();
+    sub_lst.traverse();
+}
+
+int main()
+{
+    _test_();
 
     return 0;
 }

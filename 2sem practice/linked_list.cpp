@@ -72,13 +72,13 @@ DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other, unsigned pos_1
         push(curr, true);
 }
 
-DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other, unsigned pos_1, unsigned pos_2, bool is_shared)
+DoublyLinkedList::DoublyLinkedList(DoublyLinkedList& other, unsigned pos_1, unsigned pos_2, bool is_shared)
 {
     if(!is_shared) DoublyLinkedList(other, pos_1, pos_2);
     else
     {
-        head = std::make_shared<Node> ();
-        tail = std::make_shared<Node> ();
+        head = other._get_shared_node_by_index_(pos_1);
+        tail = other._get_shared_node_by_index_(pos_2);
         isShared = true;
     }
 
@@ -111,7 +111,7 @@ void DoublyLinkedList::push(const Product& data, bool inEnd) // Добавлен
         head = new_node;
         tail = head;
     }
-    else // иначе
+    else
     {
         new_node->set_prev(tail); // Ставим хвост списка предыдущим элементом для новой ноды
         tail->set_next(new_node); // Новую ноду ставим следующим элементом для хвоста
@@ -231,15 +231,20 @@ shared_node_obj DoublyLinkedList::pop() // Удаление объекта с к
     if(head == nullptr) // Если голова имеет нулевой указатель - ничего не делаем
         return nullptr;
     
-    if(head->get_next() == nullptr) // Если следующий для головы указатель - нулевой, то отвязываем указатель от головы
-    {
+    if(head->get_next() == nullptr) {
         head.reset();
+        tail.reset();
+        length = 0;
         return nullptr;
     }
 
-    shared_node_obj curr = tail->get_prev(); // Привязываем к curr предыдущий для хвоста указатель
-    tail = curr; // Хвосту же привязываем curr (предыдущий)
-    tail->get_next().reset(); // Отвязываем прошлый указатель хвоста (тк больше объектов на него не ссылается - память очистится)
+    shared_node_obj curr = tail; // Привязываем к curr предыдущий для хвоста указатель
+    tail = curr->get_prev(); // Хвосту же привязываем curr (предыдущий)
+    if (tail != nullptr) {
+        tail->set_next(nullptr);
+    } else {
+        head.reset();
+    }
 
     curr.reset(); // Отвязываем указатель от созданного объекта
 
@@ -258,19 +263,22 @@ shared_node_obj DoublyLinkedList::pop(bool inStart) // Удаление объе
 
     if(!inStart) return pop(); // Если inStart == false - удаляем объект из конца
     
-    if(head == nullptr) // Если голова имеет нулевой указатель - ничего не делаем
+    if(head == nullptr) {
         return nullptr;
-
-    shared_node_obj temp = head; // Привязываем объекту указатель головы
-    head = head->get_next(); // К голове же привязываем следующий от головы указатель
-
-    if(head != nullptr) // Если после привязки голова не имеет нулевой указатель - задаём её предыдущий объект нулевым указателем
-        head->set_prev(nullptr);
+    }
     
-    temp.reset(); // Отвязываем от временного объекта указатель прошлой головы (память очищается тк больше на тот указатель никто не ссылается)
-
+    shared_node_obj temp = head;
+    head = head->get_next();
+    
+    if(head != nullptr) {
+        head->set_prev(nullptr);
+    } else {
+        tail.reset();
+    }
+    
+    temp.reset();
     length--;
-
+    
     return head;
 }
 
@@ -346,6 +354,25 @@ unsigned DoublyLinkedList::_count_length_for_shared_()
 
     return len;
 }   
+
+shared_node_obj DoublyLinkedList::_get_shared_node_by_index_(unsigned pos_1)
+{
+    shared_node_obj curr = head;
+    unsigned cnt {0};
+
+    while (cnt < pos_1 && curr != nullptr)
+    {
+        curr = curr->get_next();
+        cnt++;
+    }
+
+    return curr;
+}
+
+DoublyLinkedList DoublyLinkedList::_get_shared_list_(unsigned pos_1, unsigned pos_2)
+{
+    return DoublyLinkedList(*this, pos_1, pos_2);
+}
 
 void DoublyLinkedList::traverse(bool isBackward) // Вывод списка в консоль в обратном порядке
 {
@@ -455,7 +482,13 @@ bool DoublyLinkedList::swap(unsigned pos_1, unsigned pos_2)
 void DoublyLinkedList::clear()
 {
     while (head != nullptr) // Пока голова не будет равна нулевому указателю - удаляем все элементы списка
-        pop();
+    {
+        shared_node_obj temp = head;
+        head = head->get_next();
+        temp.reset();
+    }
+    tail.reset();
+    length = 0;
 }
 
 const DoublyLinkedList& DoublyLinkedList::operator =(const DoublyLinkedList& other) // Переопределение оператора присваивания копированием
@@ -725,8 +758,10 @@ bool DoublyLinkedList::load(const char* file_name) // Метод для счит
 
 DoublyLinkedList::~DoublyLinkedList()
 {
-    if(amount_of_sublists != 0)
+    if(isShared)
     {
-
-    }
+        head.reset();
+        tail.reset();
+    } else
+        clear();
 }

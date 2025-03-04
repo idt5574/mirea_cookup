@@ -30,12 +30,14 @@ class DoublyLinkedList
     bool isShared {false};     
 
     DoublyLinkedList(const DoublyLinkedList&, unsigned, unsigned);
-    DoublyLinkedList(const DoublyLinkedList&, unsigned, unsigned, bool);
+    DoublyLinkedList(DoublyLinkedList&, unsigned, unsigned, bool);
 
     void push(shared_node_obj);
     void push(shared_node_obj, bool);
 
     unsigned _count_length_for_shared_();
+    shared_node_obj _get_shared_node_by_index_(unsigned);
+    DoublyLinkedList _get_shared_list_(unsigned, unsigned);
 
 public:
 
@@ -120,6 +122,8 @@ public:
     /* Если список не пустой, то объекты будут добавляться справа, ничего удалено из не будет*/
 
     ~DoublyLinkedList();
+
+    friend void _test_();
 };
 
 #endif
