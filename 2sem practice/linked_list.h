@@ -1,6 +1,9 @@
 #ifndef _LINKED_LIST_H_
 #define _LINKED_LIST_H_
 
+#include <vector>
+#include <algorithm>
+
 #include "node.cpp" // Вставляем node.cpp со всеми реализациями
 // Вставлять product.cpp уже нет смысла, тк это было сделано в файле node.cpp
 
@@ -17,6 +20,15 @@ enum class _sort_parameters_
     supplier
 };
 
+union _filter_dt_
+{
+    _suppliers_ sup;
+    unsigned id;
+    double price;
+    std::string name;
+
+};
+
 // Класс двусвязного списка
 
 class DoublyLinkedList
@@ -25,7 +37,6 @@ class DoublyLinkedList
     shared_node_obj tail; // Умный указатель на хвост (последний объект связного списка)
 
     unsigned length {0};
-    unsigned amount_of_sublists {0};
 
     bool isShared {false};     
 
@@ -94,9 +105,15 @@ public:
 
     DoublyLinkedList sublist(unsigned, unsigned);
 
+    DoublyLinkedList filter(const std::vector<std::string>);
+    DoublyLinkedList filter(const std::vector<double>);
+    DoublyLinkedList filter(const std::vector<unsigned>);
+    DoublyLinkedList filter(const std::vector<_suppliers_>);
+
     const DoublyLinkedList& sort(_sort_parameters_, bool);
 
     bool swap(unsigned, unsigned);
+    
 
     void clear();
 

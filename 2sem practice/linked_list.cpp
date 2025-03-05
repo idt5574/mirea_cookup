@@ -2,12 +2,14 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
+
+using std::find;
 
 DoublyLinkedList::DoublyLinkedList()
 {
-    push(Product());
-    length = 1;
+    head = nullptr;
+    tail = nullptr;
+    length = 0;
 }
 
 DoublyLinkedList::DoublyLinkedList(const DoublyLinkedList& other) // Копирование связного списка
@@ -465,6 +467,66 @@ DoublyLinkedList DoublyLinkedList::sublist(unsigned pos_1, unsigned pos_2)
 {
     DoublyLinkedList sub_lst {*this, pos_1, pos_2};
     return sub_lst;
+}
+
+DoublyLinkedList DoublyLinkedList::filter(const std::vector<std::string> _filter_values_)
+{
+    DoublyLinkedList new_list;
+
+    shared_node_obj curr = head;
+
+    for(; curr != nullptr; curr = curr->get_next())
+    {
+        if(std::find(_filter_values_.begin(), _filter_values_.end(), curr->get_name()) != _filter_values_.end())
+            new_list.push(curr);
+    }
+
+    return new_list;
+}
+
+DoublyLinkedList DoublyLinkedList::filter(const std::vector<double> _filter_values_)
+{
+    DoublyLinkedList new_list;
+
+    shared_node_obj curr = head;
+
+    for(; curr != nullptr; curr = curr->get_next())
+    {
+        if(std::find(_filter_values_.begin(), _filter_values_.end(), curr->get_price()) != _filter_values_.end())
+            new_list.push(curr, true);
+    }
+
+    return new_list;
+}
+
+DoublyLinkedList DoublyLinkedList::filter(const std::vector<unsigned> _filter_values_)
+{
+    DoublyLinkedList new_list;
+
+    shared_node_obj curr = head;
+
+    for(; curr != nullptr; curr = curr->get_next())
+    {
+        if(std::find(_filter_values_.begin(), _filter_values_.end(), curr->get_id()) != _filter_values_.end())
+            new_list.push(curr, true);
+    }
+
+    return new_list;
+}
+
+DoublyLinkedList DoublyLinkedList::filter(const std::vector<_suppliers_> _filter_values_)
+{
+    DoublyLinkedList new_list;
+
+    shared_node_obj curr = head;
+
+    for(; curr != nullptr; curr = curr->get_next())
+    {
+        if(std::find(_filter_values_.begin(), _filter_values_.end(), curr->get_supplier()) != _filter_values_.end())
+            new_list.push(curr, true);
+    }
+
+    return new_list;
 }
 
 bool DoublyLinkedList::swap(unsigned pos_1, unsigned pos_2)
