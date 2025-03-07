@@ -12,7 +12,7 @@ enum _extra_return_values_ // Особые значения, которые бу
     _cant_find_object_ = 128128128
 };
 
-enum class _sort_parameters_
+enum _sort_parameters_
 {
     id,
     name,
@@ -49,6 +49,8 @@ class DoublyLinkedList
     unsigned _count_length_for_shared_();
     shared_node_obj _get_shared_node_by_index_(unsigned);
     DoublyLinkedList _get_shared_list_(unsigned, unsigned);
+    
+    unsigned _partition_(unsigned, unsigned, _sort_parameters_, bool);
 
 public:
 
@@ -110,7 +112,7 @@ public:
     DoublyLinkedList filter(const std::vector<unsigned>);
     DoublyLinkedList filter(const std::vector<_suppliers_>);
 
-    const DoublyLinkedList& sort(_sort_parameters_, bool);
+    void sort(_sort_parameters_, unsigned, unsigned, bool);
 
     bool swap(unsigned, unsigned);
     

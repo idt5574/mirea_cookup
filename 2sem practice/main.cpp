@@ -18,9 +18,8 @@ int main()
     lst.push({11, "Belt", 3500, bratyxi_42}, true);
     lst.push({12, "Shoes", 12000, bratyxi_42}, true);
 
-    DoublyLinkedList filtered_lst = lst.filter(std::vector<double>{2500, 3000});
-
-    filtered_lst.traverse();
+    lst.sort(price, 0, lst.get_length() - 1, true);
+    lst.traverse();
     
 
     return 0;

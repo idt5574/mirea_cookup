@@ -541,6 +541,110 @@ bool DoublyLinkedList::swap(unsigned pos_1, unsigned pos_2)
     return true;
 }
 
+unsigned DoublyLinkedList::_partition_(unsigned low, unsigned high, _sort_parameters_ _data_type_, bool reverse)
+{
+    Product pivot = (*this)[high];
+
+    int i = low - 1;
+
+    for(int j = low; j < high; j++)
+    {
+        if(reverse)
+        {
+            switch (_data_type_)
+            {
+            case price:
+                if((*this)[j].get_price() > pivot.get_price())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+
+            case name:
+                if((*this)[j].get_name() > pivot.get_name())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+            
+            case supplier:
+                if((*this)[j].get_supplier() > pivot.get_supplier())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+            
+            default:
+                if((*this)[j].get_id() > pivot.get_id())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+            }
+        } else
+        {
+            switch (_data_type_)
+            {
+            case price:
+                if((*this)[j].get_price() > pivot.get_price())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+
+            case name:
+                if((*this)[j].get_name() > pivot.get_name())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+            
+            case supplier:
+                if((*this)[j].get_supplier() > pivot.get_supplier())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+            
+            default:
+                if((*this)[j].get_id() > pivot.get_id())
+                {
+                    i++;
+                    swap(i, j);
+                }
+                break;
+            }
+        }
+    }
+
+    swap(i + 1, high);
+
+    return i + 1;
+}
+
+void DoublyLinkedList::sort(_sort_parameters_ _data_type_, unsigned low, unsigned high, bool reverse)
+{
+    if (length == 0) return; // Проверка на пустой список
+
+    if(low < high)
+    {
+        unsigned pivot = _partition_(low, high, _data_type_, reverse);
+
+        if (pivot > 0) // Проверка, чтобы избежать переполнения unsigned
+        {
+            sort(_data_type_, low, pivot - 1, reverse);
+        }
+        sort(_data_type_, pivot + 1, high, reverse);
+    }
+}
+
 void DoublyLinkedList::clear()
 {
     while (head != nullptr) // Пока голова не будет равна нулевому указателю - удаляем все элементы списка
