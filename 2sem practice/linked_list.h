@@ -50,7 +50,15 @@ class DoublyLinkedList
     shared_node_obj _get_shared_node_by_index_(unsigned);
     DoublyLinkedList _get_shared_list_(unsigned, unsigned);
     
-    unsigned _partition_(unsigned, unsigned, _sort_parameters_, bool);
+    unsigned _partition_by_price_(unsigned, unsigned, bool);
+    unsigned _partition_by_id_(unsigned, unsigned, bool);
+    unsigned _partition_by_name_(unsigned, unsigned, bool);
+    unsigned _partition_by_supplier_(unsigned, unsigned, bool);
+
+    void _sort_by_price_(unsigned, unsigned, bool);
+    void _sort_by_id_(unsigned, unsigned, bool);
+    void _sort_by_name_(unsigned, unsigned, bool);
+    void _sort_by_supplier(unsigned, unsigned, bool);
 
 public:
 
