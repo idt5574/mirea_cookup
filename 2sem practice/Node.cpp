@@ -7,33 +7,31 @@ template <typename T>
 Node<T>::Node() = default;
 
 template <typename T>
-Node<T>::Node(const Node<T>& other) : data(other.data) {}
+Node<T>::Node(const Node<T>& other) : data(other.data), next(nullptr), prev(nullptr) {}
 
 template <typename T>
-Node<T>::Node(Node<T>&& move) : data(move.data) 
+Node<T>::Node(Node<T>&& move) : data(move.data), next(nullptr), prev(nullptr) 
 {
     move.data = T();
 }
 
 template <typename T>
-Node<T>::Node(const T& object) : data(object) {}
+Node<T>::Node(const T& object) : data(object), next(nullptr), prev(nullptr) {}
 
 template <typename T>
-Node<T>::Node(std::shared_ptr<Node<T>>& other) : data(other.get()->data) {}
+Node<T>::Node(std::shared_ptr<Node<T>>& other) : data(other.get()->data), next(nullptr), prev(nullptr) {}
 
 // Setters
 
 template <typename T>
 void Node<T>::set_next(std::shared_ptr<Node<T>> new_next)
 {
-    next.reset();
     next = new_next;
 }
 
 template <typename T>
 void Node<T>::set_prev(std::shared_ptr<Node<T>> new_prev)
 {
-    prev.reset();
     prev = new_prev;
 }
 
@@ -41,6 +39,12 @@ void Node<T>::set_prev(std::shared_ptr<Node<T>> new_prev)
 
 template <typename T>
 T& Node<T>::get_raw_data()
+{
+    return data;
+}
+
+template <typename T>
+const T& Node<T>::get_raw_data() const
 {
     return data;
 }

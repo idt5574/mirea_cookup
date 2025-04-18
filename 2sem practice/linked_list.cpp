@@ -13,10 +13,8 @@ DoublyLinkedList<D>::DoublyLinkedList(const DoublyLinkedList<D>& other) // Ко�
 {
     shared_node_obj<D> curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
 
-    length = other.length;
-
     for(; curr != nullptr; curr = curr->get_next()) // Пока указатель "текущего" объекта не будет равен нулевому, перебираем все элементы прибавляемого списка
-       push((D){curr.get()->get_raw_object()}, true); // Добавляем новые элементы в конец текущего списка
+       push((D){curr.get()->get_raw_data()}, true); // Добавляем новые элементы в конец текущего списка
     
     curr.reset(); // Отвязываем указатель от "текущего" объекта
 }
@@ -37,7 +35,7 @@ template <typename D>
 DoublyLinkedList<D>::DoublyLinkedList(const D& data) // Создание связного списка только с одной переданной нодой
 {
     head = std::make_shared<Node<D>>(data);
-    tail.swap(head);
+    tail = head;
 
     length = 1;
 }
@@ -101,6 +99,10 @@ void DoublyLinkedList<D>::push(const D& data) // Добавление элеме
         head->set_prev(new_node);
 
     head = new_node; // Заменяем указатель головы на новую ноду
+
+    if(length == 0)
+        tail = head;
+
     new_node.reset(); // Отвязываем новую ноду от созданного объекта
 
     length++;
@@ -109,14 +111,9 @@ void DoublyLinkedList<D>::push(const D& data) // Добавление элеме
 template <typename D>
 void DoublyLinkedList<D>::push(const D& data, bool inEnd) // Добавление элемента в конец списка
 {
-    std::cout << "Method starded\n";
     if(!inEnd) return push(data); // Если inEnd == false - начинаем процесс добавления в начало списка
 
-    std::cout << "Condition passed\n";
-
     shared_node_obj<D> new_node = std::make_shared<Node<D>>(data); // Новая нода (создаётся указатель и сразу привязывается к объекту new_node)
-    
-    std::cout << "New node initialized\n";
 
     if(head == nullptr)
     { // Если головы не существует, сразу привязываем к ней новый указатель
@@ -125,13 +122,9 @@ void DoublyLinkedList<D>::push(const D& data, bool inEnd) // Добавлени�
     }
     else
     {
-        std::cout << "else\n";
+        tail->set_next(new_node); // Новую ноду ставим следующим элементом для хвоста   
         new_node->set_prev(tail); // Ставим хвост списка предыдущим элементом для новой ноды
-        std::cout << 1;    
-        tail->set_next(new_node); // Новую ноду ставим следующим элементом для хвоста
-        std::cout << 2;
         tail = new_node; // Перепривязываем объект хвоста к новой ноде
-        std::cout << 3;
     }
 
     new_node.reset(); // Отвязываем новую ноду от созданного объекта
@@ -156,6 +149,10 @@ void DoublyLinkedList<D>::push(shared_node_obj<D> other)
         head->set_prev(new_node);
 
     head = new_node; // Заменяем указатель головы на новую ноду
+
+    if(length == 0)
+        tail = head;
+
     new_node.reset(); // Отвязываем новую ноду от созданного объекта
 
     length++;
@@ -182,8 +179,8 @@ void DoublyLinkedList<D>::push(shared_node_obj<D> other, bool is_end)
     }
     else // иначе
     {   
-        new_node->set_prev(tail); // Ставим хвост списка предыдущим элементом для новой ноды
         tail->set_next(new_node); // Новую ноду ставим следующим элементом для хвоста  
+        new_node->set_prev(tail); // Ставим хвост списка предыдущим элементом для новой ноды
         tail = new_node; // Перепривязываем объект хвоста к новой ноде
     }
 
@@ -285,14 +282,16 @@ shared_node_obj<D> DoublyLinkedList<D>::pop(bool inStart) // Удаление о
 
     if(!inStart) return pop(); // Если inStart == false - удаляем объект из конца
     
-    if(head == nullptr) {
+    if(head == nullptr) 
+    {
         return nullptr;
     }
     
     shared_node_obj<D> temp = head;
     head = head->get_next();
     
-    if(head != nullptr) {
+    if(head != nullptr) 
+    {
         head->set_prev(nullptr);
     } else {
         tail.reset();
@@ -339,29 +338,8 @@ shared_node_obj<D> DoublyLinkedList<D>::remove(int pos) // Удаление об
 }
 
 template <typename D>
-unsigned DoublyLinkedList<D>::get_length()
+unsigned DoublyLinkedList<D>::get_length() const
 { return length; }
-
-template <typename D>
-void DoublyLinkedList<D>::traverse() // Вывод списка в консоль в прямом порядке
-{
-    shared_node_obj<D> curr = head; // К новому объекту привязываем указатель головы
-
-    std::cout << "START" << std::endl;
-
-    while (curr != nullptr) // Пока указатель нового объекта не равен нулевому
-    {
-        std::cout << curr.get()->get_raw_object() << std::endl; // Выводим данные об объектах построчно
-        curr = curr->get_next(); // Переприсваиваем указатель на следующий от текущего
-
-        if(isShared && curr == tail)
-            break;
-    }
-
-    std::cout << "END" << std::endl;
-
-    curr.reset(); // Отвязываем указатель от нового объекта
-}
 
 template <typename D>
 unsigned DoublyLinkedList<D>::_count_length_for_shared_()
@@ -401,40 +379,6 @@ DoublyLinkedList<D> DoublyLinkedList<D>::_get_shared_list_(unsigned pos_1, unsig
 {
     return DoublyLinkedList<D>(*this, pos_1, pos_2);
 }
-
-template <typename D>
-void DoublyLinkedList<D>::traverse(bool isBackward) // Вывод списка в консоль в обратном порядке
-{
-    if(!isBackward) return traverse(); // Если isBackward == false - выводим в прямом порядке
-
-    shared_node_obj<D> curr = tail; // К новому объекту привязываем указатель хвоста
-
-    std::cout << "START" << std::endl;
-
-    while (curr != nullptr) // Пока указатель нового объекта не равен нулевому
-    {
-        std::cout << curr.get()->get_raw_data() << std::endl; // Выводим данные об объектах построчно
-        curr = curr->get_prev(); // Переприсваиваем указатель на предыдущий от текущего
-
-        if(isShared && curr == head)
-            break;
-    }
-
-    std::cout << "END" << std::endl;
-
-    curr.reset(); // Отвязываем указатель от нового объекта
-}
-
-// int DoublyLinkedList<D>::length() // Посчёт длины списка
-// {
-//     int len {0}; // Инициализация переменной, которая будет хранить нашу длину
-
-//     for(shared_node_obj<D>cur = head; cur != nullptr; cur = cur->get_next()) // Создаём новый объект, привязываем к нему указатель на голову списка
-//         len++;                                                             // и до момента пока новый объект не будет равен нулевому указателю
-//                                                                            // прибавляем 1 к длине. Каждую итерацию присваиваем "текущему" объекту следующий
-//     return len;
-// }
-
 
 template <typename D>
 unsigned DoublyLinkedList<D>::search(const D& other) // Поиск строго определённого продукта в списке
@@ -780,6 +724,18 @@ Node<D>& DoublyLinkedList<D>::operator[] (unsigned index)
 }
 
 template <typename D>
+const Node<D>& DoublyLinkedList<D>::operator[] (unsigned index) const
+{
+    if(index >= length) return *head;
+
+    shared_node_obj<D>curr = head;
+
+    for(int i = 0; curr != nullptr && i != index; i++, curr = curr->get_next());
+
+    return *curr;
+}
+
+template <typename D>
 bool DoublyLinkedList<D>::save(const char* file_name) // Метод записи связного списка в бинарный файл (filename - переданная строка с именем файла в который будет произведено сохранение)
 {
     std::ofstream ofs(file_name, std::ios::out | std::ios::binary); // Открываем файлоый поток для файла с именем file_name в бинарном режиме записи
@@ -815,7 +771,7 @@ bool DoublyLinkedList<D>::save(const char* file_name) // Метод записи
 template <typename D>
 bool DoublyLinkedList<D>::load(const char* file_name) // Метод для считывания связного списка из бинарного файла
 {
-    std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
+        std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
     if (!ifs.is_open()) { // Поверяем, удалось ли открыть файл
         std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n"; // Если не удалось, сообщаем об этом в консоли
         return false; // Считывание не удалось - возвращаем false

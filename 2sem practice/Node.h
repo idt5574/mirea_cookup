@@ -28,12 +28,13 @@ public:
 
     // Setters..
 
-    void set_next(std::shared_ptr<Node>);
-    void set_prev(std::shared_ptr<Node>);
+    void set_next(std::shared_ptr<Node<T>>);
+    void set_prev(std::shared_ptr<Node<T>>);
 
     // Getters..
 
     T& get_raw_data();
+    const T& get_raw_data() const;
 
     std::shared_ptr<Node<T>> get_prev();
     std::shared_ptr<Node<T>> get_next();
