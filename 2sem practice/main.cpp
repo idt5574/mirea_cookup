@@ -4,23 +4,54 @@
 
 int main()
 {
-    DoublyLinkedList lst {{}, {1, "Boots", 20000, bratyxi_42}};
-
-    lst.push({2, "T-Shirt", 5000, bratyxi_42}, true);
-    lst.push({3, "Jeans", 7000, bratyxi_42}, true);
-    lst.push({4, "Jacket", 15000, bratyxi_42}, true);
-    lst.push({5, "Hat", 3000, bratyxi_42}, true);
-    lst.push({6, "Gloves", 2500, bratyxi_42}, true);
-    lst.push({7, "Scarf", 3000, bratyxi_42}, true);
-    lst.push({8, "Socks", 3000, bratyxi_42}, true);
-    lst.push({9, "Sweater", 8000, bratyxi_42}, true);
-    lst.push({10, "Shorts", 4000, bratyxi_42}, true);
-    lst.push({11, "Belt", 3500, bratyxi_42}, true);
-    lst.push({12, "Shoes", 12000, bratyxi_42}, true);
-
-    lst.sort(price, 0, lst.get_length() - 1, true);
-    lst.traverse();
+    Node<int> dflt_node_init;
     
+    Node trans_node_init_1 {-5};
+
+    Node copy_node_init {trans_node_init_1};
+    
+    Node move_node_init {(Node<int>){-10}};
+
+    std::cout << "Node variables: " << std::endl;
+    std::cout << dflt_node_init.get_raw_data() << ' ' << trans_node_init_1.get_raw_data() << 
+            ' ' << copy_node_init.get_raw_data() << ' ' << move_node_init.get_raw_data() << std::endl;
+    std::cout << std::endl;
+
+    DoublyLinkedList<int> list_int;
+    list_int.push(1);
+    list_int.push(2);
+    list_int.push(3);
+
+    std::cout << "list_int created\n";
+
+    DoublyLinkedList<std::string> list_string;
+    list_string.push("one");
+    list_string.push("two");
+    list_string.push("three");
+
+    std::cout << "list_string created\n";
+
+    DoublyLinkedList<double> list_double; std::cout << "init\n";
+    list_double.push(1); std::cout << "push 1\ns";
+    list_double.push(2); std::cout << "push 2\n";
+    list_double.push(3, true); std::cout << "push 3 in end\n";
+
+    std::cout << "list_double created\n";
+
+    std::cout << "list_int:" << std::endl;
+    for(int i = 0; i < list_int.get_length(); i++)
+        std::cout << list_int[i].get_raw_data() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "list_string:" << std::endl;
+    for(int i = 0; i < list_string.get_length(); i++)
+        std::cout << list_string[i].get_raw_data() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "list_double:" << std::endl;
+    for(int i = 0; i < list_double.get_length(); i++)
+        std::cout << list_double[i].get_raw_data() << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
