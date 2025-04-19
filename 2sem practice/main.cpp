@@ -5,9 +5,16 @@
 template <typename T>
 void print_list(const DoublyLinkedList<T>& array, const std::string& name)
 {
+    size_t curr_length = array.get_length();
+
     std::cout << name << ':' << std::endl;
-    for(int i = 0; i < array.get_length(); i++)
-        std::cout << array[i].get_raw_data() << std::endl;
+
+    if(curr_length == 0)
+        std::cout << "<EMPTY>\n";
+    
+    for(int i = 0; i < curr_length; i++)
+        std::cout << i << ") " << array[i].get_raw_data() << std::endl;
+    
     std::cout << std::endl;
 }
 
@@ -65,12 +72,90 @@ int main()
 
     std::cout << "list_two_elem_init created\n";
 
+    DoublyLinkedList<int> cycle_filled_list;
+
+    for(int i = 0; i < 100; i++)
+    {
+        cycle_filled_list.push(i, (i % 2 == 0 ? true : false));
+    }
+
+    std::cout << "cycle_filled_list created\n";
+
+    DoublyLinkedList cycle_filled_sublist = cycle_filled_list.sublist(10, 20);
+
+    std::cout << "cycle_filled_sublist\n";
+
+    DoublyLinkedList cycle_filled_filtered = cycle_filled_list.filter_by_values({1, 2, 50, 90});
+
+    std::cout << "cycle_filled_filtered created\n";
+
+    unsigned index_1 = cycle_filled_list.search(81);
+
+    std::cout << "Index of 81 (" << index_1 << ") finded\n";
+
+    bool res = cycle_filled_sublist.swap(4, 6);
+
+    std::cout << "Swap result: " << res << std::endl;
+
+    cycle_filled_list.clear();
+
+    std::cout << "cycle_filled_list cleared\n";
+
+    cycle_filled_sublist.sort(false);
+
     print_list(list_int, "list_int");
     print_list(list_string, "list_string");
     print_list(list_double, "list_double");
     print_list(list_string_copy, "list_string_copy");
     print_list(list_one_elem_init, "list_one_elem_init");
     print_list(list_two_elem_init, "list_two_elem_init");
+    print_list(cycle_filled_list, "cycle_filled_list");
+    print_list(cycle_filled_sublist, "cycle_filled_sublist");
+    print_list(cycle_filled_filtered, "cycle_filled_filtered");
+
+    std::cout << "===============" << std::endl;
+    std::cout << "OPERATORS CHECK" << std::endl;
+    std::cout << "===============" << std::endl;
+
+    DoublyLinkedList<std::string> lst_1;
+    DoublyLinkedList<std::string> lst_2;    
+    DoublyLinkedList<std::string> lst_3;
+    DoublyLinkedList<std::string> lst_4;
+    DoublyLinkedList<std::string> lst_5;
+
+    lst_1.push("1) Variables", true);
+    lst_1.push("2) Operators", true);
+    lst_1.push("3) Pointers", true);
+
+    lst_2.push("trash");
+    lst_2.push("garbage");
+
+    lst_3.push("4) Conditional operators", true);
+    lst_3.push("5) Cycles", true);
+    lst_3.push("6) Functions", true);
+
+    lst_4 += (const std::string)"-1) Computer's architecture";
+    lst_4.push("0) Binary code", true);
+
+    lst_5 += (const std::string)("trash");
+    lst_5 += (const std::string)("garbage");
+
+    print_list(lst_1, "lst_1");
+    print_list(lst_2, "lst_2");
+    print_list(lst_3, "lst_3");
+    print_list(lst_4, "lst_4");
+    print_list(lst_5, "lst_5");
+
+    lst_2 -= lst_5;
+
+    std::cout << "Removes lst_5 elements from lst_2\n";
+    print_list(lst_2, "lst_2");
+
+    lst_2 = lst_3;
+
+    DoublyLinkedList lst_res = (lst_4 + lst_1) + lst_2;
+
+    print_list(lst_res, "lst_res");
 
     return 0;
 }

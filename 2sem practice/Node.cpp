@@ -78,6 +78,12 @@ const Node<T>& Node<T>::operator=(Node<T>&& move)
     move.data = T();
 }
 
+template <typename T>
+const Node<T>& Node<T>::operator=(const T& other)
+{
+    data = other;
+}
+
 // Destructor
 
 template <typename T>

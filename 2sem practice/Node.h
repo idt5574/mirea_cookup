@@ -46,6 +46,8 @@ public:
     const Node<T>& operator=(const Node<T>&);
     const Node<T>& operator=(Node<T>&&);
 
+    const Node<T>& operator=(const T&);
+
     // Destructor..
 
     ~Node();

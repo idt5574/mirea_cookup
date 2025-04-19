@@ -389,7 +389,7 @@ unsigned DoublyLinkedList<D>::search(const D& other) // Поиск строго 
 
     while (curr != nullptr) // Пока "текущий" объект не равен нулевому
     {
-        if(curr->get_raw_object() == other.get_raw_object()) // ищем совпадающий объект
+        if(curr.get()->get_raw_data() == other) // ищем совпадающий объект
         {
             curr.reset(); // Если нашли - отвязываем от "текущего" объекта указатель
             return pos; // возвращаем найденную позицию (метод заканчивает выполнение)
@@ -415,15 +415,15 @@ DoublyLinkedList<D> DoublyLinkedList<D>::sublist(unsigned pos_1, unsigned pos_2)
 }
 
 template <typename D>
-DoublyLinkedList<D> DoublyLinkedList<D>::filter(const std::vector<D> _filter_values_)
+DoublyLinkedList<D> DoublyLinkedList<D>::filter_by_values(const std::vector<D> _filter_values_)
 {
-    DoublyLinkedList<D>new_list;
+    DoublyLinkedList<D> new_list;
 
-    shared_node_obj<D>curr = head;
+    shared_node_obj<D> curr = head;
 
     for(; curr != nullptr; curr = curr->get_next())
     {
-        if(std::find(_filter_values_.begin(), _filter_values_.end(), curr->get_raw_object()) != _filter_values_.end())
+        if(std::find(_filter_values_.begin(), _filter_values_.end(), curr.get()->get_raw_data()) != _filter_values_.end())
             new_list.push(curr, true);
     }
 
@@ -435,10 +435,10 @@ bool DoublyLinkedList<D>::swap(unsigned pos_1, unsigned pos_2)
 {
     if(pos_1 >= length || pos_2 >= length) return false;
 
-    D temp = (*this)[pos_1];
+    D temp = this->operator[](pos_1).get_raw_data();
 
-    (*this)[pos_1] = (*this)[pos_2];
-    (*this)[pos_2] = temp;
+    this->operator[](pos_1).get_raw_data() = this->operator[](pos_2).get_raw_data();
+    this->operator[](pos_2).get_raw_data() = temp;
 
     return true;
 }
@@ -446,7 +446,7 @@ bool DoublyLinkedList<D>::swap(unsigned pos_1, unsigned pos_2)
 template <typename D>
 unsigned DoublyLinkedList<D>::_partition_by_obj_(unsigned low, unsigned high, bool reverse)
 {
-    D pivot = (*this)[high];
+    D pivot = this->operator[](high).get_raw_data();
 
     int i = low - 1;
 
@@ -454,13 +454,13 @@ unsigned DoublyLinkedList<D>::_partition_by_obj_(unsigned low, unsigned high, bo
     {
         if(reverse)
         {
-            if((*this)[j].get_raw_object() > pivot.get_raw_object())
+            if(this->operator[](j).get_raw_data() > pivot)
             {
                 i++;
                 swap(i, j);
             }
         } else {
-            if((*this)[j].get_raw_object() < pivot.get_raw_object())
+            if(this->operator[](j).get_raw_data() < pivot)
             {
                 i++;
                 swap(i, j);
@@ -491,14 +491,11 @@ void DoublyLinkedList<D>::_sort_by_obj_(unsigned low, unsigned high, bool revers
 }
 
 template <typename D>
-void DoublyLinkedList<D>::sort(_sort_parameters_ _data_type_, unsigned low, unsigned high, bool reverse)
+void DoublyLinkedList<D>::sort(bool reverse)
 {
     if (length == 0) return; // Проверка на пустой список
 
-    if(low < high)
-    {
-        _sort_by_obj_(low, high, reverse);   
-    }
+    _sort_by_obj_(0, length - 1, reverse);   
 }
 
 template <typename D>
@@ -528,7 +525,7 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator =(const DoublyLinkedLis
     clear();
 
     for(shared_node_obj<D> curr = other.head; curr != nullptr; curr = curr->get_next()) // Переносим все элементы списка other в текущий
-        push((D){curr->get_id(), curr->get_name(), curr->get_raw_object(), curr->get_supplier()}, true); // Вставка в конец
+        push((D){curr->get_raw_data()}, true); // Вставка в конец
 
     return *this; // Возвращаем копию (константную ссылку) текущего объекта
 }
@@ -556,7 +553,7 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator =(DoublyLinkedList<D>&&
 }
 
 template <typename D>
-const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+(const DoublyLinkedList<D>& other) // Переопределение оператора суммирования для двух связных списков
+DoublyLinkedList<D> DoublyLinkedList<D>::operator+(const DoublyLinkedList<D>& other) // Переопределение оператора суммирования для двух связных списков
 {
     if(isShared)
     {
@@ -567,13 +564,13 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+(const DoublyLinkedList
     DoublyLinkedList<D>& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
     for(shared_node_obj<D> curr = other.head; curr != nullptr; curr = curr->get_next()) // Проходим весь список other
-        lst.push((D){curr->get_id(), curr->get_name(), curr->get_raw_object(), curr->get_supplier()}, true); // Поочерёдно добавляя каждый элемент в конец "нового" списка
+        lst.push((D){curr->get_raw_data()}, true); // Поочерёдно добавляя каждый элемент в конец "нового" списка
 
     return lst; // Возвращаем полученный связный список
 }
 
 template <typename D>
-const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+(const D& other) // Переопределение операции суммирования для связного списка и продукта
+DoublyLinkedList<D> DoublyLinkedList<D>::operator+(const D& other) // Переопределение операции суммирования для связного списка и продукта
 {   
     if(isShared)
     {
@@ -583,13 +580,13 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+(const D& other) // П�
 
     DoublyLinkedList<D>& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
 
-    lst.push((D){other.get_id(), other.get_name(), other.get_raw_object(), other.get_supplier()}, true); // Добавляем новый продукт в конец
+    lst.push((D){other.get_raw_data()}, true); // Добавляем новый продукт в конец
 
     return lst; // Возвращаем новый список
 }
 
 template <typename D>
-const DoublyLinkedList<D>& DoublyLinkedList<D>::operator -(const DoublyLinkedList<D>& other) // Переопределение операции вычитания для двух связных списков
+DoublyLinkedList<D> DoublyLinkedList<D>::operator -(const DoublyLinkedList<D>& other) // Переопределение операции вычитания для двух связных списков
 {
     if(isShared)
     {
@@ -603,7 +600,7 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator -(const DoublyLinkedLis
 
     for(; curr != nullptr; curr = curr->get_next()) // Далее, пока "текущий" объект не равен нулевому, перебираем все элементы вычитаемого списка
     {
-        unsigned pos = lst.search((D){curr->get_id(), curr->get_name(), curr->get_raw_object(), curr->get_supplier()}); // Проверяем, есть ли в текущем списке "текущий" объект
+        unsigned pos = lst.search((D){curr->get_raw_data()}); // Проверяем, есть ли в текущем списке "текущий" объект
         
         if(pos == _cant_find_object_) // Если нет - переходим к следующему элементу перебора
             continue;
@@ -617,7 +614,7 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator -(const DoublyLinkedLis
 }
 
 template <typename D>
-const DoublyLinkedList<D>& DoublyLinkedList<D>::operator-(const D& other) // Переопределение операции вычитания для связного списка и продукта
+DoublyLinkedList<D> DoublyLinkedList<D>::operator-(const D& other) // Переопределение операции вычитания для связного списка и продукта
 {
     if(isShared)
     {
@@ -648,7 +645,7 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+=(const DoublyLinkedLis
     shared_node_obj<D> curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
 
     for(; curr != nullptr; curr = curr->get_next()) // Пока указатель "текущего" объекта не будет равен нулевому, перебираем все элементы прибавляемого списка
-        push((D){curr->get_id(), curr->get_name(), curr->get_raw_object(), curr->get_supplier()}, true); // Добавляем новые элементы в конец текущего списка
+        push((D){curr->get_raw_data()}, true); // Добавляем новые элементы в конец текущего списка
 
     curr.reset(); // Отвязываем указатель от "текущего" объекта
 
@@ -682,7 +679,7 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator-=(const DoublyLinkedLis
  
     for(; curr != nullptr && head != nullptr; curr = curr->get_next()) // Пока голова текущего списка, либо пока указатель "текущего" объекта не будут равны нулевому объекту, перебираем все элементы вычитаемого списка
     {
-        unsigned pos = search((D){curr->get_id(), curr->get_name(), curr->get_raw_object(), curr->get_supplier()}); // Ищем "текущий" объект в текущем списке
+        unsigned pos = search((D){curr->get_raw_data()}); // Ищем "текущий" объект в текущем списке
 
         if(pos == _cant_find_object_) continue; // Если нет - переходим к следующему объекту
         remove(pos); // Иначе удаляем из текущего списка "текущий" объект
@@ -716,7 +713,7 @@ Node<D>& DoublyLinkedList<D>::operator[] (unsigned index)
 {
     if(index >= length) return *head;
 
-    shared_node_obj<D>curr = head;
+    shared_node_obj<D> curr = head;
 
     for(int i = 0; curr != nullptr && i != index; i++, curr = curr->get_next());
 
