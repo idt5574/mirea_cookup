@@ -18,6 +18,25 @@ void print_list(const DoublyLinkedList<T>& array, const std::string& name)
     std::cout << std::endl;
 }
 
+template <>
+void print_list(const DoublyLinkedList<Product>& array, const std::string& name)
+{
+    size_t curr_length = array.get_length();
+
+    std::cout << name << ':' << std::endl;
+
+    if(curr_length == 0)
+        std::cout << "<EMPTY>\n";
+    
+    for(int i = 0; i < curr_length; i++)
+        std::cout << i << ") " << array[i].get_raw_data().get_id() << ' ' 
+                                << array[i].get_raw_data().get_name() << ' ' 
+                                << array[i].get_raw_data().get_price() << ' ' 
+                                << array[i].get_raw_data().get_supplier() << std::endl;
+    
+    std::cout << std::endl;
+}
+
 int main()
 {
     Node<int> dflt_node_init;
@@ -168,6 +187,36 @@ int main()
 
     print_list(load_res_1, "load_res_1");
     print_list(load_res_2, "load_res_2");
+
+    puts("==================");
+    puts("Products and lists");
+    puts("==================");
+
+    Product p1 {1, "Alabaster", 300, double_r},
+        p2 {2, "Coconut", 100, barabulka},
+        p3 {3, "Drawer", 4000, unknown_supplier},
+        p4 {4, "Bomb", 1300, rnb_club},
+        p5 {5, "Error", 1, bratyxi_42};
+
+    DoublyLinkedList<Product> product_list;
+
+    product_list.push(p1, true);
+    product_list.push(p2, true);
+    product_list.push(p3, true);
+    product_list.push(p4, true);
+    product_list.push(p5, true);
+
+    product_list.sort(id, false);
+    print_list(product_list, "product_list id");
+
+    product_list.sort(name, false);
+    print_list(product_list, "product_list name");
+
+    product_list.sort(price, false);
+    print_list(product_list, "product_list price");
+
+    product_list.sort(supplier, false);
+    print_list(product_list, "product_list supplier");
 
     return 0;
 }

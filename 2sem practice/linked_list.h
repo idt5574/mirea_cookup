@@ -51,8 +51,16 @@ class DoublyLinkedList
     DoublyLinkedList<D> _get_shared_list_(unsigned, unsigned);
     
     unsigned _partition_by_obj_(unsigned, unsigned, bool); // +
+    unsigned _partition_by_price_(unsigned, unsigned, bool);
+    unsigned _partition_by_id_(unsigned, unsigned, bool);
+    unsigned _partition_by_name_(unsigned, unsigned, bool);
+    unsigned _partition_by_supplier_(unsigned, unsigned, bool);
 
     void _sort_by_obj_(unsigned, unsigned, bool); // +
+    void _sort_by_price_(unsigned, unsigned, bool);
+    void _sort_by_id_(unsigned, unsigned, bool);
+    void _sort_by_name_(unsigned, unsigned, bool);
+    void _sort_by_supplier(unsigned, unsigned, bool);
 
 public:
 
@@ -91,6 +99,7 @@ public:
     DoublyLinkedList<D> filter_by_values(const std::vector<D>); // +
 
     void sort(bool); // +
+    void sort(_sort_parameters_, bool); // +
 
     bool swap(unsigned, unsigned); // +
     
