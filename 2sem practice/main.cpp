@@ -149,6 +149,9 @@ int main()
     lst_2.push("trash");
     lst_2.push("garbage");
 
+    std::cout << list_string[20].get_raw_data() << std::endl;
+
+
     lst_3.push("4) Conditional operators", true);
     lst_3.push("5) Cycles", true);
     lst_3.push("6) Functions", true);

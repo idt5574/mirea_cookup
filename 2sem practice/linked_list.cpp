@@ -1,4 +1,5 @@
 #include "linked_list.h"
+#include "CustomExceptions.h"
 
 #include <iostream>
 #include <fstream>
@@ -135,9 +136,14 @@ void DoublyLinkedList<D>::push(const D& data, bool inEnd) // Добавлени�
 template <typename D>
 void DoublyLinkedList<D>::push(shared_node_obj<D> other)
 {
-    if(isShared) 
+    try
     {
-        std::cout << "err: Can't push to shared list" << std::endl;
+        if(isShared) 
+            throw PushToSharedDoublyLinkedListError("WARNING: push: you can't push elements to shared list");
+    }
+    catch(const PushToSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return;
     }
 
@@ -161,12 +167,17 @@ void DoublyLinkedList<D>::push(shared_node_obj<D> other)
 template <typename D>
 void DoublyLinkedList<D>::push(shared_node_obj<D> other, bool is_end)
 {
-    if(isShared) 
+    try
     {
-        std::cout << "err: Can't push to shared list" << std::endl;
+        if(isShared) 
+            throw PushToSharedDoublyLinkedListError("WARNING: push: you can't push elements to shared list");
+    }
+    catch(const PushToSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return;
     }
-
+    
     if(!is_end) return push(other);
 
     std::cout << 0;
@@ -192,18 +203,26 @@ void DoublyLinkedList<D>::push(shared_node_obj<D> other, bool is_end)
 template <typename D>
 void DoublyLinkedList<D>::insert(const D& data, int pos) // Добавление элемента на любую позицию внутри списка
 {
-    if(isShared) 
+    try
     {
-        std::cout << "err: Can't insert into shared list" << std::endl;
+        if(isShared) 
+            throw InsertIntoSharedDoublyLinkedListError("WARNING: insert: You can't insert into shared list");
+
+        if(pos < 0) // Если позиция меньше нуля - добавить не может
+            throw IncorrectIndexDoublyLinkedListError("WARNING: insert: Operation was canceled, incorrect index");
+
+    }
+    catch(const InsertIntoSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return;
     }
-
-    if(pos < 0) // Если позиция меньше нуля - добавить не может
+    catch(const IncorrectIndexDoublyLinkedListError& e)
     {
-        std::cout << "ERROR! Invalid insertion position\n";
+        std::cerr << e.what() << '\n';
         return;
     }
-
+    
     if(pos == 0) return push(data); // Если позиция равна нулю - просто добавляем объект в начало
 
     shared_node_obj<D> curr = head; // Привязываем указатель головы к объекту curr
@@ -215,9 +234,14 @@ void DoublyLinkedList<D>::insert(const D& data, int pos) // Добавление
         count++; // Увеличиваем на 1 счетчик
     }
     
-    if(curr == nullptr) // Если curr привязан к нулевому указателю - значит позиция находится за границами списка
+    try
     {
-        std::cout << "ERROR! Invalid insertion position\n";
+        if(curr == nullptr) // Если curr привязан к нулевому указателю - значит позиция находится за границами списка
+            throw IncorrectIndexDoublyLinkedListError("WARNING: insert: Operation was canceled, incorrect index");
+    }
+    catch(const IncomparableTypesLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return;
     }
 
@@ -240,11 +264,17 @@ void DoublyLinkedList<D>::insert(const D& data, int pos) // Добавление
 template <typename D>
 shared_node_obj<D> DoublyLinkedList<D>::pop() // Удаление объекта с конца
 {
-    if(isShared) 
+    try
     {
-        std::cout << "err: Can't pop from shared list" << std::endl;
+        if(isShared) 
+            throw PopFromSharedDoublyLinkedListError("WARNING: pop: You can't pop from shared list");
+    }
+    catch(const PopFromSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return head;
     }
+    
 
     if(head == nullptr) // Если голова имеет нулевой указатель - ничего не делаем
         return nullptr;
@@ -274,15 +304,21 @@ shared_node_obj<D> DoublyLinkedList<D>::pop() // Удаление объекта
 template <typename D>
 shared_node_obj<D> DoublyLinkedList<D>::pop(bool inStart) // Удаление объекта из начала
 {
-    if(isShared) 
+    try
     {
-        std::cout << "err: Can't pop from shared list" << std::endl;
+        if(isShared) 
+            throw PopFromSharedDoublyLinkedListError("WARNING: pop: You can't pop from shared list");
+
+    }
+    catch(const PopFromSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return head;
     }
 
     if(!inStart) return pop(); // Если inStart == false - удаляем объект из конца
     
-    if(head == nullptr) 
+    if(head == nullptr)
     {
         return nullptr;
     }
@@ -306,11 +342,17 @@ shared_node_obj<D> DoublyLinkedList<D>::pop(bool inStart) // Удаление о
 template <typename D>
 shared_node_obj<D> DoublyLinkedList<D>::remove(int pos) // Удаление объекта из любой позиции в границах списка
 {
-    if(isShared) 
+    try
     {
-        std::cout << "err: Can't remove from shared list" << std::endl;
+        if(isShared) 
+            throw RemoveFromSharedDoublyLinkedListError("WARNING: remove: You can't remove from shared list");
+    }
+    catch(const RemoveFromSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return head;
     }
+    
 
     if(!head) return head; // Если указатель головы нулевой - ничего не делаем
 
@@ -514,9 +556,14 @@ void DoublyLinkedList<D>::clear()
 template <typename D>
 const DoublyLinkedList<D>& DoublyLinkedList<D>::operator =(const DoublyLinkedList<D>& other) // Переопределение оператора присваивания копированием
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't assign to shared list" << std::endl;
+        if(isShared)
+            throw AssignmentOperationSharedDoublyLinkedListError("WARNING: operator=: Assignment operation is not comparable with shared list");
+    }
+    catch(const AssignmentOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -533,9 +580,14 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator =(const DoublyLinkedLis
 template <typename D>
 const DoublyLinkedList<D>& DoublyLinkedList<D>::operator =(DoublyLinkedList<D>&& move) // Переопределение оператора присваивания перемещением
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't assign to shared list" << std::endl;
+        if(isShared)
+            throw AssignmentOperationSharedDoublyLinkedListError("WARNING: operator=: Assignment operation is not comparable with shared list");
+    }
+    catch(const AssignmentOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -555,9 +607,14 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator =(DoublyLinkedList<D>&&
 template <typename D>
 DoublyLinkedList<D> DoublyLinkedList<D>::operator+(const DoublyLinkedList<D>& other) // Переопределение оператора суммирования для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -572,9 +629,14 @@ DoublyLinkedList<D> DoublyLinkedList<D>::operator+(const DoublyLinkedList<D>& ot
 template <typename D>
 DoublyLinkedList<D> DoublyLinkedList<D>::operator+(const D& other) // Переопределение операции суммирования для связного списка и продукта
 {   
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -588,9 +650,14 @@ DoublyLinkedList<D> DoublyLinkedList<D>::operator+(const D& other) // Перео
 template <typename D>
 DoublyLinkedList<D> DoublyLinkedList<D>::operator -(const DoublyLinkedList<D>& other) // Переопределение операции вычитания для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -616,9 +683,14 @@ DoublyLinkedList<D> DoublyLinkedList<D>::operator -(const DoublyLinkedList<D>& o
 template <typename D>
 DoublyLinkedList<D> DoublyLinkedList<D>::operator-(const D& other) // Переопределение операции вычитания для связного списка и продукта
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -636,9 +708,14 @@ DoublyLinkedList<D> DoublyLinkedList<D>::operator-(const D& other) // Перео
 template <typename D>
 const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+=(const DoublyLinkedList<D>& other) // Переопределение расширенной операции присваивания с суммированием для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+=: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -655,9 +732,14 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+=(const DoublyLinkedLis
 template <typename D>
 const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+=(const D& other) // Переопределение расширенной операции присваивания с суммированием для связного списка и продукта
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+=: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -669,9 +751,14 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator+=(const D& other) // П
 template <typename D>
 const DoublyLinkedList<D>& DoublyLinkedList<D>::operator-=(const DoublyLinkedList<D>& other) // Переопределение расширенной операции присваивания с вычитанием для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-=: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -693,9 +780,14 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator-=(const DoublyLinkedLis
 template <typename D>
 const DoublyLinkedList<D>& DoublyLinkedList<D>::operator-=(const D& other) // Переопределение расширенной операции присваивания с вычитанием для связного списка и продукта
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-=: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -711,7 +803,16 @@ const DoublyLinkedList<D>& DoublyLinkedList<D>::operator-=(const D& other) // П
 template <typename D>
 Node<D>& DoublyLinkedList<D>::operator[] (unsigned index)
 {
-    if(index >= length) return *head;
+    try
+    {
+        if(index >= length)
+            throw IncorrectIndexDoublyLinkedListError("WARNING: operator[]: Operation canceled, incorrect index");
+    }
+    catch(const IncorrectIndexDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return *head.get();
+    }
 
     shared_node_obj<D> curr = head;
 
@@ -723,7 +824,16 @@ Node<D>& DoublyLinkedList<D>::operator[] (unsigned index)
 template <typename D>
 const Node<D>& DoublyLinkedList<D>::operator[] (unsigned index) const
 {
-    if(index >= length) return *head;
+    try
+    {
+        if(index >= length)
+            throw IncorrectIndexDoublyLinkedListError("WARNING: operator[]: Operation canceled, incorrect index");
+    }
+    catch(const IncorrectIndexDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return *head.get();
+    }
 
     shared_node_obj<D>curr = head;
 
@@ -736,9 +846,16 @@ template <typename D>
 bool DoublyLinkedList<D>::save(const char* file_name) // Метод записи связного списка в бинарный файл (filename - переданная строка с именем файла в который будет произведено сохранение)
 {
     std::ofstream ofs(file_name, std::ios::out | std::ios::binary); // Открываем файлоый поток для файла с именем file_name в бинарном режиме записи
-    if (!ofs.is_open()) { // Проверяем, открылся ли файл
-        std::cout << "ERROR: File " << file_name << " wasn't opened for writing.\n"; // Если нет, то прерываем запись
-        return false; // Запись прошла с ошибкой - возвращаем false
+
+    try
+    {
+        if (!ofs.is_open()) 
+            throw FileDoesNotExistDoublyLinkedListError("WARNING: save: Can't find file");
+    }
+    catch(const FileDoesNotExistDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
     }
 
     shared_node_obj<D> curr = head; // Привязываем к новому "текущему" объекту указатель на голову текущего связного списка
@@ -766,9 +883,16 @@ template <typename D>
 bool DoublyLinkedList<D>::load(const char* file_name) // Метод для считывания связного списка из бинарного файла
 {
     std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
-    if (!ifs.is_open()) { // Поверяем, удалось ли открыть файл
-        std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n"; // Если не удалось, сообщаем об этом в консоли
-        return false; // Считывание не удалось - возвращаем false
+    
+    try
+    {
+        if (!ifs.is_open()) 
+            throw FileDoesNotExistDoublyLinkedListError("WARNING: load: Can't find file");
+    }
+    catch(const FileDoesNotExistDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
     }
 
     unsigned len; // Объявляем переменную для последующего считывания в неё длины связного списка
@@ -779,10 +903,7 @@ bool DoublyLinkedList<D>::load(const char* file_name) // Метод для сч�
     ifs.read((char*)&type, sizeof(unsigned long long));
 
     if(type != type_curr)
-    {
-        std::cout << "Innapropriate types!\n";
-        return false;
-    }
+        throw IncomparableTypesLinkedListError("WARNING: load: List's type is not comparable with list from file");
 
     for (int i = 0; i < len; i++) // Пока i не будет равно длине связного списка
     {
@@ -816,10 +937,18 @@ template <>
 bool DoublyLinkedList<std::string>::save(const char* file_name) // Метод записи связного списка в бинарный файл (filename - переданная строка с именем файла в который будет произведено сохранение)
 {
     std::ofstream ofs(file_name, std::ios::out | std::ios::binary); // Открываем файлоый поток для файла с именем file_name в бинарном режиме записи
-    if (!ofs.is_open()) { // Проверяем, открылся ли файл
-        std::cout << "ERROR: File " << file_name << " wasn't opened for writing.\n"; // Если нет, то прерываем запись
-        return false; // Запись прошла с ошибкой - возвращаем false
+
+    try
+    {
+        if (!ofs.is_open()) 
+            throw FileDoesNotExistDoublyLinkedListError("WARNING: save: Can't find file");
     }
+    catch(const FileDoesNotExistDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
+    
 
     shared_node_obj<std::string> curr = head; // Привязываем к новому "текущему" объекту указатель на голову текущего связного списка
     unsigned len = length; // Сохраняем в переменной длину связного списка (чтоб было удобно загружать список из файла)
@@ -848,9 +977,16 @@ template <>
 bool DoublyLinkedList<std::string>::load(const char* file_name) // Метод для считывания связного списка из бинарного файла
 {
     std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
-    if (!ifs.is_open()) { // Поверяем, удалось ли открыть файл
-        std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n"; // Если не удалось, сообщаем об этом в консоли
-        return false; // Считывание не удалось - возвращаем false
+
+    try
+    {
+        if (!ifs.is_open()) 
+            throw FileDoesNotExistDoublyLinkedListError("WARNING: load: Can't find file");
+    }
+    catch(const FileDoesNotExistDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
     }
 
     unsigned len; // Объявляем переменную для последующего считывания в неё длины связного списка
@@ -860,12 +996,17 @@ bool DoublyLinkedList<std::string>::load(const char* file_name) // Метод д
         type_curr = typeid(head.get()->get_raw_data()).hash_code();
     ifs.read((char*)&type, sizeof(unsigned long long));
 
-    if(type != type_curr)
+    try
     {
-        std::cout << "Innapropriate types!\n";
+        if(type != type_curr)
+            throw IncomparableTypesLinkedListError("WARNING: load: List's type is not comparable with list from file");
+    }
+    catch(const IncomparableTypesLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return false;
     }
-
+    
     for (int i = 0; i < len; i++) // Пока i не будет равно длине связного списка
     {
         int data_len; // Объявляем переменную для последующего считывания в неё длины из файла
@@ -1152,9 +1293,14 @@ void DoublyLinkedList<Product>::sort(_sort_parameters_ _data_type_, bool reverse
 template <>
 const DoublyLinkedList<Product>& DoublyLinkedList<Product>::operator =(const DoublyLinkedList<Product>& other) // Переопределение оператора присваивания копированием
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't assign to shared list" << std::endl;
+        if(isShared)
+            throw AssignmentOperationSharedDoublyLinkedListError("WARNING: operator=: Assignment operation is not comparable with shared list");
+    }
+    catch(const AssignmentOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -1174,9 +1320,14 @@ const DoublyLinkedList<Product>& DoublyLinkedList<Product>::operator =(const Dou
 template <>
 DoublyLinkedList<Product> DoublyLinkedList<Product>::operator +(const DoublyLinkedList<Product>& other) // Переопределение оператора суммирования для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -1194,9 +1345,14 @@ DoublyLinkedList<Product> DoublyLinkedList<Product>::operator +(const DoublyLink
 template <>
 DoublyLinkedList<Product> DoublyLinkedList<Product>::operator+(const Product& other) // Переопределение операции суммирования для связного списка и продукта
 {   
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -1210,9 +1366,14 @@ DoublyLinkedList<Product> DoublyLinkedList<Product>::operator+(const Product& ot
 template <>
 DoublyLinkedList<Product> DoublyLinkedList<Product>::operator -(const DoublyLinkedList<Product>& other) // Переопределение операции вычитания для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -1241,10 +1402,15 @@ DoublyLinkedList<Product> DoublyLinkedList<Product>::operator -(const DoublyLink
 template <>
 DoublyLinkedList<Product> DoublyLinkedList<Product>::operator-(const Product& other) // Переопределение операции вычитания для связного списка и продукта
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
-        return *this;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return *this;   
     }
 
     DoublyLinkedList& lst {*this}; // Новый связный список, равный текущему (копирование доступно благодаря переопределённому конструктору копирования)
@@ -1261,10 +1427,14 @@ DoublyLinkedList<Product> DoublyLinkedList<Product>::operator-(const Product& ot
 template <>
 const DoublyLinkedList<Product>& DoublyLinkedList<Product>::operator+=(const DoublyLinkedList<Product>& other) // Переопределение расширенной операции присваивания с суммированием для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't push to shared list" << std::endl;
-        return *this;
+        if(isShared)
+            throw SummationOperationSharedDoublyLinkedListError("WARNING: operator+=: Summation operation is not comparable with shared list");
+    }
+    catch(const SummationOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
     }
 
     shared_node_obj<Product> curr = other.head; // Новому "текущему" объекту присваиваем указатель на голову прибавляемого списка
@@ -1283,9 +1453,14 @@ const DoublyLinkedList<Product>& DoublyLinkedList<Product>::operator+=(const Dou
 template <>
 const DoublyLinkedList<Product>& DoublyLinkedList<Product>::operator-=(const DoublyLinkedList<Product>& other) // Переопределение расширенной операции присваивания с вычитанием для двух связных списков
 {
-    if(isShared)
+    try
     {
-        std::cout << "err: can't pop from shared list" << std::endl;
+        if(isShared)
+            throw SubtractionOperationSharedDoublyLinkedListError("WARNING: operator-=: Subtraction operation is not comparable with shared list");
+    }
+    catch(const SubtractionOperationSharedDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
         return *this;
     }
 
@@ -1311,14 +1486,24 @@ template<>
 bool DoublyLinkedList<Product>::save(const char* file_name) // Метод записи связного списка в бинарный файл (filename - переданная строка с именем файла в который будет произведено сохранение)
 {
     std::ofstream ofs(file_name, std::ios::out | std::ios::binary); // Открываем файлоый поток для файла с именем file_name в бинарном режиме записи
-    if (!ofs.is_open()) { // Проверяем, открылся ли файл
-        std::cout << "ERROR: File " << file_name << " wasn't opened for writing.\n"; // Если нет, то прерываем запись
-        return false; // Запись прошла с ошибкой - возвращаем false
+    
+    try
+    {
+        if (!ofs.is_open()) 
+            throw FileDoesNotExistDoublyLinkedListError("WARNING: save: Can't find file");
+    }
+    catch(const FileDoesNotExistDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
     }
 
     shared_node_obj<Product> curr = head; // Привязываем к новому "текущему" объекту указатель на голову текущего связного списка
     int len = length; // Сохраняем в переменной длину связного списка (чтоб было удобно загружать список из файла)
     ofs.write((char*)&len, sizeof(int)); // Первым делом записываем длину связного списка в бинарном файле
+
+    unsigned long long type = typeid(curr.get()->get_raw_data()).hash_code();
+    ofs.write((char*)&type, sizeof(unsigned long long));
 
     while (curr != nullptr) // Далее пока не дойдём до конца связного списка
     {
@@ -1344,14 +1529,29 @@ template <>
 bool DoublyLinkedList<Product>::load(const char* file_name) // Метод для считывания связного списка из бинарного файла
 {
     std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
-    if (!ifs.is_open()) { // Поверяем, удалось ли открыть файл
-        std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n"; // Если не удалось, сообщаем об этом в консоли
-        return false; // Считывание не удалось - возвращаем false
+    
+    try
+    {
+        if (!ifs.is_open()) 
+            throw FileDoesNotExistDoublyLinkedListError("WARNING: load: Can't find file");
+    }
+    catch(const FileDoesNotExistDoublyLinkedListError& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
     }
 
     int len; // Объявляем переменную для последующего считывания в неё длины связного списка
     ifs.read((char*)&len, sizeof(int)); // Считываем длину списка из файла (для этого мы её первым делом записывали в методе записи в бинарный файл)
 
+    unsigned long long type,
+        type_curr = typeid(head.get()->get_raw_data()).hash_code();
+    ifs.read((char*)&type, sizeof(unsigned long long));
+
+    if(type != type_curr)
+        throw IncomparableTypesLinkedListError("WARNING: load: List's type is not comparable with list from file");
+
+    
     for (int i = 0; i < len; i++) // Пока i не будет равно длине связного списка
     {
         unsigned id; // Объявляем переменную для последующего считывания в неё айди из файла
