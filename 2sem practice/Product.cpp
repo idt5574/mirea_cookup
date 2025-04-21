@@ -30,7 +30,7 @@ Product::Product(Product&& move)
 
 // Конструктор преобразования (данные разных типов преобразует в наш класс) + конструктор по умолчанию
 
-Product::Product(unsigned id=0, std::string nameplate="unnamed", double cost=0, _suppliers_ sup=unknown_supplier)
+Product::Product(unsigned id=0, std::string nameplate = "unnamed", double cost=0, _suppliers_ sup=unknown_supplier)
 : id(id), nameplate(nameplate), cost_price(cost), sup(sup)
 {}
 

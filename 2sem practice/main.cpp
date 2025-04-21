@@ -157,5 +157,17 @@ int main()
 
     print_list(lst_res, "lst_res");
 
+    lst_res.save("Roadmap");
+    cycle_filled_filtered.save("Digits");
+
+    DoublyLinkedList<std::string> load_res_1;
+    DoublyLinkedList<int> load_res_2;
+
+    load_res_1.load("Roadmap");
+    load_res_2.load("Digits");
+
+    print_list(load_res_1, "load_res_1");
+    print_list(load_res_2, "load_res_2");
+
     return 0;
 }

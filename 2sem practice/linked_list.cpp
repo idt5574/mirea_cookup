@@ -742,18 +742,15 @@ bool DoublyLinkedList<D>::save(const char* file_name) // Метод записи
     }
 
     shared_node_obj<D> curr = head; // Привязываем к новому "текущему" объекту указатель на голову текущего связного списка
-    int len = length; // Сохраняем в переменной длину связного списка (чтоб было удобно загружать список из файла)
-    ofs.write((char*)&len, sizeof(int)); // Первым делом записываем длину связного списка в бинарном файле
+    unsigned len = length; // Сохраняем в переменной длину связного списка (чтоб было удобно загружать список из файла)
+    ofs.write((char*)&len, sizeof(unsigned)); // Первым делом записываем длину связного списка в бинарном файле
+
+    unsigned long long type = typeid(curr.get()->get_raw_data()).hash_code();
+    ofs.write((char*)&type, sizeof(unsigned long long));
 
     while (curr != nullptr) // Далее пока не дойдём до конца связного списка
     {
-        ofs.write((char*)&curr->get_id(), sizeof(unsigned)); // Записываем в бинарный файл айди текущего объекта
-
-        int s = curr->get_name().size(); // Сохраняем в переменной длину имени объекта (чтоб было удобно записывать и загружать имя объекта)
-        ofs.write((char*)&s, sizeof(int)); // Записываем в бинарный файл длину имени объекта
-        ofs.write(curr->get_name().c_str(), s); // Записываем в бинарный файл имя объекта (как раз используя ранее сохранённую длину) 
-        ofs.write((char*)&curr->get_raw_object(), sizeof(double)); // Записываем в бинарный файл цену объекта
-        ofs.write((char*)&curr->get_supplier(), sizeof(_suppliers_)); // Записываем в бинарный файл производителя объекта
+        ofs.write((char*)&curr.get()->get_raw_data(), sizeof(D)); // Записываем в бинарный файл данные текущего элемента
 
         curr = curr->get_next(); // Переходим к следующему объекту (и так до последнего)
 
@@ -768,33 +765,31 @@ bool DoublyLinkedList<D>::save(const char* file_name) // Метод записи
 template <typename D>
 bool DoublyLinkedList<D>::load(const char* file_name) // Метод для считывания связного списка из бинарного файла
 {
-        std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
+    std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
     if (!ifs.is_open()) { // Поверяем, удалось ли открыть файл
         std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n"; // Если не удалось, сообщаем об этом в консоли
         return false; // Считывание не удалось - возвращаем false
     }
 
-    int len; // Объявляем переменную для последующего считывания в неё длины связного списка
-    ifs.read((char*)&len, sizeof(int)); // Считываем длину списка из файла (для этого мы её первым делом записывали в методе записи в бинарный файл)
+    unsigned len; // Объявляем переменную для последующего считывания в неё длины связного списка
+    ifs.read((char*)&len, sizeof(unsigned)); // Считываем длину списка из файла (для этого мы её первым делом записывали в методе записи в бинарный файл)
+
+    unsigned long long type,
+        type_curr = typeid(head.get()->get_raw_data()).hash_code();
+    ifs.read((char*)&type, sizeof(unsigned long long));
+
+    if(type != type_curr)
+    {
+        std::cout << "Innapropriate types!\n";
+        return false;
+    }
 
     for (int i = 0; i < len; i++) // Пока i не будет равно длине связного списка
     {
-        unsigned id; // Объявляем переменную для последующего считывания в неё айди из файла
-        int name_len; // Объявляем переменную для последующего считывания в неё длины из файла
-        ifs.read((char*)&id, sizeof(unsigned)); // Считываем из бинарного файла айди объекта
+        D data; // Объявляем переменную для последующего считывания в неё айди из файла
+        ifs.read((char*)&data, sizeof(D)); // Считываем из бинарного файла айди объекта
 
-        ifs.read((char*)&name_len, sizeof(int)); // Считываем из бинарного файла длину имени объекта
-
-        std::vector<char> name(name_len + 1); // Объявляем динамический массив символов под длину равной длине имени + 1 (+ 1 для нулевого символа)
-        ifs.read(name.data(), name_len); // Считываем из бинарного файла имя объекта
-        name[name_len] = '\0';  // Добавляем нулевой символ в конец строки
-
-        double price; // Объявляем переменную для последующего считывания в неё цены объекта
-        _suppliers_ supplier; // Объявляем переменную для последующего считывания в неё поставщика объекта
-        ifs.read((char*)&price, sizeof(double)); // Считываем из бинарного файла цену объекта
-        ifs.read((char*)&supplier, sizeof(_suppliers_)); // Считываем из бинарного файла поставщика объекта
-
-        push({id, name.data(), price, supplier}, true); // Добавляем в текущий связный список продукт, со считанными из бинарного файла данными (объект добавляется в конец)
+        push({data}, true); // Добавляем в текущий связный список продукт, со считанными из бинарного файла данными (объект добавляется в конец)
     }
 
     ifs.close(); // Закрываем файловый поток
@@ -811,3 +806,80 @@ DoublyLinkedList<D>::~DoublyLinkedList()
     } else
         clear();
 }
+
+
+// Specializations
+
+// For std::string type
+
+template <>
+bool DoublyLinkedList<std::string>::save(const char* file_name) // Метод записи связного списка в бинарный файл (filename - переданная строка с именем файла в который будет произведено сохранение)
+{
+    std::ofstream ofs(file_name, std::ios::out | std::ios::binary); // Открываем файлоый поток для файла с именем file_name в бинарном режиме записи
+    if (!ofs.is_open()) { // Проверяем, открылся ли файл
+        std::cout << "ERROR: File " << file_name << " wasn't opened for writing.\n"; // Если нет, то прерываем запись
+        return false; // Запись прошла с ошибкой - возвращаем false
+    }
+
+    shared_node_obj<std::string> curr = head; // Привязываем к новому "текущему" объекту указатель на голову текущего связного списка
+    unsigned len = length; // Сохраняем в переменной длину связного списка (чтоб было удобно загружать список из файла)
+    ofs.write((char*)&len, sizeof(unsigned)); // Первым делом записываем длину связного списка в бинарном файле
+
+    unsigned long long type = typeid(curr.get()->get_raw_data()).hash_code();
+    ofs.write((char*)&type, sizeof(unsigned long long));
+
+    while (curr != nullptr) // Далее пока не дойдём до конца связного списка
+    {
+        int s = curr.get()->get_raw_data().size();
+        ofs.write((char*)&s, sizeof(int));
+        ofs.write(curr.get()->get_raw_data().c_str(), s); // Записываем в бинарный файл данные текущего элемента
+
+        curr = curr->get_next(); // Переходим к следующему объекту (и так до последнего)
+
+        if(isShared && curr == tail)
+            break;
+    }
+    
+    ofs.close(); // Закрываем файловый поток
+    return true; // Запись прошла успешно - возвращаем true
+}
+
+template <>
+bool DoublyLinkedList<std::string>::load(const char* file_name) // Метод для считывания связного списка из бинарного файла
+{
+    std::ifstream ifs(file_name, std::ios::in | std::ios::binary); // Открываем файловый поток для файла с именем file_name в бинарном режиме считывания
+    if (!ifs.is_open()) { // Поверяем, удалось ли открыть файл
+        std::cout << "ERROR: File " << file_name << " wasn't opened for reading.\n"; // Если не удалось, сообщаем об этом в консоли
+        return false; // Считывание не удалось - возвращаем false
+    }
+
+    unsigned len; // Объявляем переменную для последующего считывания в неё длины связного списка
+    ifs.read((char*)&len, sizeof(unsigned)); // Считываем длину списка из файла (для этого мы её первым делом записывали в методе записи в бинарный файл)
+
+    unsigned long long type,
+        type_curr = typeid(head.get()->get_raw_data()).hash_code();
+    ifs.read((char*)&type, sizeof(unsigned long long));
+
+    if(type != type_curr)
+    {
+        std::cout << "Innapropriate types!\n";
+        return false;
+    }
+
+    for (int i = 0; i < len; i++) // Пока i не будет равно длине связного списка
+    {
+        int data_len; // Объявляем переменную для последующего считывания в неё длины из файла
+        ifs.read((char*)&data_len, sizeof(int)); // Считываем из бинарного файла длину имени объекта
+        
+        std::vector<char> data(data_len + 1); // Объявляем динамический массив символов под длину равной длине имени + 1 (+ 1 для нулевого символа)
+        ifs.read(data.data(), data_len); // Считываем из бинарного файла имя объекта
+        data[data_len] = '\0';  // Добавляем нулевой символ в конец строки
+
+        push(data.data(), true); // Добавляем в текущий связный список продукт, со считанными из бинарного файла данными (объект добавляется в конец)
+    }
+
+    ifs.close(); // Закрываем файловый поток
+    return true; // Считывание прошло успешно - возвращаем true
+}
+
+// For Product type
