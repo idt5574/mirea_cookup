@@ -5,66 +5,50 @@
 
 #include <memory>
 
-// Класс ноды (элемента связного списка)
+// Класс ноды (элемента связного списка))))))))))))
 
+template <typename T = int>
 class Node
 {
-    Product data; 
+    T data {0}; 
 
-    std::shared_ptr<Node> prev {nullptr}; // Умный указатель на предыдущую ноду
-    std::shared_ptr<Node> next {nullptr}; // Умный указатель на следующую ноду
+    std::shared_ptr<Node<T>> prev {nullptr}; // Умный указатель на предыдущую ноду
+    std::shared_ptr<Node<T>> next {nullptr}; // Умный указатель на следующую ноду
 
 public:
 
-    // Constructors
+    // Constructors..
 
     Node();
-    Node(const Node&);
-    Node(Node&&);
+    Node(const Node<T>&);
+    Node(Node<T>&&);
 
-    Node(const Product&);
-    Node(std::shared_ptr<Node>&);
+    Node(const T&);
+    Node(std::shared_ptr<Node<T>>&);
 
-    // Setters
+    // Setters..
 
-    void set_nameplate(const char*);
-    void set_price(double);
-    void set_supplier(_suppliers_);
+    void set_next(std::shared_ptr<Node<T>>);
+    void set_prev(std::shared_ptr<Node<T>>);
 
-    void set_next(std::shared_ptr<Node>);
-    void set_prev(std::shared_ptr<Node>);
+    // Getters..
 
-    // Getters
+    T& get_raw_data();
+    const T& get_raw_data() const;
 
-    const unsigned& get_id(); 
-    const std::string& get_name();
-    const double& get_price();
-    const _suppliers_& get_supplier();
-    const Product& get_product();
+    std::shared_ptr<Node<T>> get_prev();
+    std::shared_ptr<Node<T>> get_next();
 
-    std::shared_ptr<Node> get_prev();
-    std::shared_ptr<Node> get_next();
-
-    // Other methods
+    // Other methods..
 
     // Переопределённые операции
 
-    const Node& operator=(const Node&);
-    const Node& operator=(Node&&);
+    const Node<T>& operator=(const Node<T>&);
+    const Node<T>& operator=(Node<T>&&);
 
-    const Node& operator=(double);
-    const Node& operator=(unsigned);
-    const Node& operator=(_suppliers_);
-    const Node& operator=(const char*);
-    const Node& operator=(const Product&);
+    const Node<T>& operator=(const T&);
 
-    operator double();
-    operator unsigned();
-    operator _suppliers_();
-    operator std::string();
-    operator Product();
-
-    // Destructor
+    // Destructor..
 
     ~Node();
     

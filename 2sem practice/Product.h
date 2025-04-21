@@ -26,9 +26,10 @@ public:
 
     // Конструкторы
 
+    Product();
     Product(const Product&); // Копирования
     Product(Product&& move); // Перемещения
-    Product(unsigned, std::string, double, _suppliers_); // Преобразования + по умолчанию
+    Product(unsigned, std::string, double, _suppliers_); // Преобразования
 
     // Setters
 

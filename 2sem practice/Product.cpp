@@ -7,6 +7,8 @@
     у вас в программе не было утечек памяти, и когда уже ни один объект не ссылается
     на shared_ptr, то указатель сам удаляется. */
 
+Product::Product() : nameplate("Unnamed"), id(0), cost_price(0), sup(unknown_supplier) {}
+
 // Конструктор копирования (позволяет инициализировать новый объект с копией данных другого объекта)
 
 Product::Product(const Product& other) 
@@ -30,7 +32,7 @@ Product::Product(Product&& move)
 
 // Конструктор преобразования (данные разных типов преобразует в наш класс) + конструктор по умолчанию
 
-Product::Product(unsigned id=0, std::string nameplate="unnamed", double cost=0, _suppliers_ sup=unknown_supplier)
+Product::Product(unsigned id, std::string nameplate, double cost, _suppliers_ sup)
 : id(id), nameplate(nameplate), cost_price(cost), sup(sup)
 {}
 

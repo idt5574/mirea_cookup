@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "node.cpp" // Вставляем node.cpp со всеми реализациями
+#include "Node.cpp" // Вставляем node.cpp со всеми реализациями
 // Вставлять product.cpp уже нет смысла, тк это было сделано в файле node.cpp
 
 enum _extra_return_values_ // Особые значения, которые будут возвращаться при возникновении исключений при работе программы
@@ -30,31 +30,33 @@ union _filter_dt_
 };
 
 // Класс двусвязного списка
-
+template <typename D>
 class DoublyLinkedList
 {
-    shared_node_obj head; // Умный указатель на голову (первый объект связного списка)
-    shared_node_obj tail; // Умный указатель на хвост (последний объект связного списка)
+    shared_node_obj<D> head {nullptr}; // Умный указатель на голову (первый объект связного списка)
+    shared_node_obj<D> tail {nullptr}; // Умный указатель на хвост (последний объект связного списка)
 
     unsigned length {0};
 
     bool isShared {false};     
 
-    DoublyLinkedList(const DoublyLinkedList&, unsigned, unsigned);
-    DoublyLinkedList(DoublyLinkedList&, unsigned, unsigned, bool);
+    DoublyLinkedList(const DoublyLinkedList<D>&, unsigned, unsigned);
+    DoublyLinkedList(DoublyLinkedList<D>&, unsigned, unsigned, bool);
 
-    void push(shared_node_obj);
-    void push(shared_node_obj, bool);
+    void push(shared_node_obj<D>);
+    void push(shared_node_obj<D>, bool);
 
     unsigned _count_length_for_shared_();
-    shared_node_obj _get_shared_node_by_index_(unsigned);
-    DoublyLinkedList _get_shared_list_(unsigned, unsigned);
+    shared_node_obj<D> _get_shared_node_by_index_(unsigned);
+    DoublyLinkedList<D> _get_shared_list_(unsigned, unsigned);
     
+    unsigned _partition_by_obj_(unsigned, unsigned, bool); // +
     unsigned _partition_by_price_(unsigned, unsigned, bool);
     unsigned _partition_by_id_(unsigned, unsigned, bool);
     unsigned _partition_by_name_(unsigned, unsigned, bool);
     unsigned _partition_by_supplier_(unsigned, unsigned, bool);
 
+    void _sort_by_obj_(unsigned, unsigned, bool); // +
     void _sort_by_price_(unsigned, unsigned, bool);
     void _sort_by_id_(unsigned, unsigned, bool);
     void _sort_by_name_(unsigned, unsigned, bool);
@@ -64,85 +66,63 @@ public:
 
     // Конструкторы
 
-    DoublyLinkedList();
+    DoublyLinkedList(); // +
 
-    DoublyLinkedList(const DoublyLinkedList&);
+    DoublyLinkedList(const DoublyLinkedList<D>&); // +
 
-    DoublyLinkedList(DoublyLinkedList&&);
+    DoublyLinkedList(DoublyLinkedList<D>&&); // +
 
-    DoublyLinkedList(const Product&);
+    DoublyLinkedList(const D&); // +
 
-    DoublyLinkedList(const Product&, const Product&);
+    DoublyLinkedList(const D&, const D&); // +
 
-    DoublyLinkedList(const char*);
+    DoublyLinkedList(const char*); // +
 
     // Методы вставки элементов
 
-    void push(const Product&); // Вставка в начало
-    void push(const Product&, bool); // Вставка в конец
+    void push(const D&); // + Вставка в начало
+    void push(const D&, bool); // + Вставка в конец
 
-    void insert(const Product&, int); // Вставка в любую доступную позици (в текущих границах списка)
+    void insert(const D&, int); // + Вставка в любую доступную позици (в текущих границах списка)
 
-    shared_node_obj pop(); // Удаление объекта из конца
-    shared_node_obj pop(bool); // Удаление объекта из начала
+    shared_node_obj<D> pop(); // + Удаление объекта из конца
+    shared_node_obj<D> pop(bool); // + Удаление объекта из начала
 
-    shared_node_obj remove(int); // Удаление объекта под любым индексом в пределах текущих грациц списка
+    shared_node_obj<D> remove(int); // + Удаление объекта под любым индексом в пределах текущих грациц списка
 
-    unsigned get_length();
+    unsigned get_length() const; // +
 
-    void traverse(); // Вывод списка в консоль
-    void traverse(bool); // Ревёрс-вывод списка в консоль
-    void traverse(const char*, bool); // Вывод определённых значений элементов списка в консоль
+    unsigned search(const D&); // + Поиск конкретного объекта в связном списке
 
-    // const char* - строка.
-    /* Если переданная строка содержит:
-        1) ID - Будет выполнен вывод айди
-        2) NAME - будет выполнен вывод имён
-        3) PRICE - будет выполнен вывод цен
-        4) SUPPLIER - будет выполнен вывод производителей
+    DoublyLinkedList<D> sublist(unsigned, unsigned); // +
 
-    !! Можно передать в строку сразу несколько параметров !!
-    */
+    DoublyLinkedList<D> filter_by_values(const std::vector<D>); // +
 
-    // bool - по умолчанию принимает значение false
-    /* false - вывод в прямом порядке
-        true - вывод в обратном порядке
-    */
+    void sort(bool); // +
+    void sort(_sort_parameters_, bool); // +
 
-//    int length(); // Подсчёт длинны связного списка
-
-    unsigned search(const Product&); // Поиск конкретного объекта в связном списке
-
-    DoublyLinkedList sublist(unsigned, unsigned);
-
-    DoublyLinkedList filter(const std::vector<std::string>);
-    DoublyLinkedList filter(const std::vector<double>);
-    DoublyLinkedList filter(const std::vector<unsigned>);
-    DoublyLinkedList filter(const std::vector<_suppliers_>);
-
-    void sort(_sort_parameters_, unsigned, unsigned, bool);
-
-    bool swap(unsigned, unsigned);
+    bool swap(unsigned, unsigned); // +
     
 
-    void clear();
+    void clear(); // +
 
-    const DoublyLinkedList& operator =(const DoublyLinkedList&); // Переопределение операции присваивания связных списков
-    const DoublyLinkedList& operator =(DoublyLinkedList&&);
+    const DoublyLinkedList<D>& operator =(const DoublyLinkedList<D>&); // + Переопределение операции присваивания связных списков
+    const DoublyLinkedList<D>& operator =(DoublyLinkedList<D>&&); // +
 
-    const DoublyLinkedList& operator +(const DoublyLinkedList&); // Позволяет получить конкатенацию двух списков
-    const DoublyLinkedList& operator +(const Product&); // Позволяет получить конкатенацию списка и продукта
+    DoublyLinkedList<D> operator +(const DoublyLinkedList<D>&); // + Позволяет получить конкатенацию двух списков
+    DoublyLinkedList<D> operator +(const D&); // + Позволяет получить конкатенацию списка и продукта
 
-    const DoublyLinkedList& operator -(const DoublyLinkedList&); // Вычитает из левого списка те объекты, которые присутствуют в правом (если они есть в левом)
-    const DoublyLinkedList& operator -(const Product&); // Вычитает продукт из списка (если он в списке есть)
+    DoublyLinkedList<D> operator -(const DoublyLinkedList<D>&); // + Вычитает из левого списка те объекты, которые присутствуют в правом (если они есть в левом)
+    DoublyLinkedList<D> operator -(const D&); // + Вычитает продукт из списка (если он в списке есть)
 
-    const DoublyLinkedList& operator +=(const DoublyLinkedList&); // Добавляет к текущему списку элементы другого списка
-    const DoublyLinkedList& operator +=(const Product&); // Добавляет к текущему списку новый продукт
+    const DoublyLinkedList<D>& operator +=(const DoublyLinkedList<D>&); // + Добавляет к текущему списку элементы другого списка
+    const DoublyLinkedList<D>& operator +=(const D&); // + Добавляет к текущему списку новый продукт
 
-    const DoublyLinkedList& operator -=(const DoublyLinkedList&); // Удаляет из текущего списка объекты из правого списка (если они есть в текущем)
-    const DoublyLinkedList& operator -=(const Product&); // Удаляет из текущего списка продукт (если тот есть в списке)
+    const DoublyLinkedList<D>& operator -=(const DoublyLinkedList<D>&); // + Удаляет из текущего списка объекты из правого списка (если они есть в текущем)
+    const DoublyLinkedList<D>& operator -=(const D&); // + Удаляет из текущего списка продукт (если тот есть в списке)
 
-    Node& operator [] (unsigned); // В случае неверно выставленного индекса, будет передана голова списка
+    Node<D>& operator [] (unsigned); // (+-) В случае неверно выставленного индекса, будет передана голова списка
+    const Node<D>& operator [] (unsigned) const; // (+-)
 
     bool save(const char*); // Сохранение списка в файл
     bool load(const char*); // Загрузка списка в файл
