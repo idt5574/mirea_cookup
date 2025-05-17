@@ -9,12 +9,53 @@ enum cnt_parameter
 	spaces
 };
 
-/*
-void iterating_over_combinations(std::vector& vct, const std::string& src)
+size_t mix(const std::string& destination, const std::string& source, unsigned short depth = 0)
 {
+	static std::string combination;
 	
+	if(depth == 0)
+		combination = "";
+
+	combination += tolower(destination[depth]);
+	
+	if(depth < destination.length() - 1)
+	{
+		size_t result = mix(destination, source, depth + 1);
+
+		if(result != std::string::npos)
+			return result;
+	}
+	else
+	{
+		size_t pos = source.find(combination);
+
+		if(pos != std::string::npos)
+			return pos;
+	}
+
+	combination.pop_back();
+
+	combination += toupper(destination[depth]);
+	
+	if(depth < destination.length() - 1)
+	{
+		size_t result = mix(destination, source, depth + 1);
+
+		if(result != std::string::npos)
+			return result;
+	}
+	else
+	{
+		size_t pos = source.find(combination);
+
+		if(pos != std::string::npos)
+			return pos;
+	}
+
+	combination.pop_back();
+
+	return std::string::npos;
 }
-*/
 
 int str_count(cnt_parameter par, const std::string& str)
 {
@@ -56,19 +97,19 @@ std::string transform_string(const std::string& source)
 {
 	std::string newString = "";
 
-	for(int i = 0; i < source.length(), ++i)
+	for(int i = 0; i < source.length(); ++i)
 	{
 		char c = source[i];
 
 		if(isupper(c))
 		{
-			newString.append(tolower(c));
+			newString += tolower(c);
 			continue;
 		}
 
 		if(islower(c))
 		{
-			newString.append(toupper(c));
+			newString += toupper(c);
 			continue;
 		}
 
@@ -76,5 +117,9 @@ std::string transform_string(const std::string& source)
 			continue;
 	}
 
+	size_t pos = mix("hello", newString);
 	
+	newString.replace(pos, pos + 5, "hi");
+
+	return newString;
 }
