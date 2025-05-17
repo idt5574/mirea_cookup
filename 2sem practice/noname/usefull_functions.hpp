@@ -115,11 +115,18 @@ std::string transform_string(const std::string& source)
 
 		if(isspace(c))
 			continue;
+		
+		newString += c;
 	}
 
-	size_t pos = mix("hello", newString);
-	
-	newString.replace(pos, pos + 5, "hi");
+	while (true)
+	{
+		size_t pos = mix("hello", newString);
+		
+		if(pos != std::string::npos)
+			newString.replace(pos, pos + 5, "hi");
+		else break;
+	}
 
 	return newString;
 }

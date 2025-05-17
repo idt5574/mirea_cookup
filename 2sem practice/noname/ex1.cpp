@@ -7,6 +7,7 @@ int main()
 {
 	std::string str;
 
+	std::cout << "Enter string: ";
 	std::getline(std::cin, str);
 	
 	int countOfUpper = str_count(upper, str), 
