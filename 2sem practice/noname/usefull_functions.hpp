@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <initializer_list>
 
 enum cnt_parameter
 {
@@ -57,40 +58,111 @@ size_t mix(const std::string& destination, const std::string& source, unsigned s
 	return std::string::npos;
 }
 
-int str_count(cnt_parameter par, const std::string& str)
+std::vector<int> str_count(const std::string& str)
 {
+	std::vector<int> counter = {0, 0, 0, 0};
 	int cnt = 0;
 
 	for(int i = 0; i < str.length(); ++i)
 	{
-		switch(par)
+		if (isupper(str[i]))
 		{
-			case upper:
-				if (isupper(str[i]))
-					++cnt;
-				break;
-			
-			case lower:
-				if (islower(str[i]))
-					++cnt;
-				break;
+			++counter[0];
+			continue;
+		}
 
-			case digits:
-				if (isdigit(str[i]))
-					++cnt;
-				break;
+		if (islower(str[i]))
+		{
+			++counter[1];
+			continue;
+		}
 
-			case spaces:
-				if (isspace(str[i]))
-					++cnt;
-				break;
+		if (isdigit(str[i]))
+		{
+			++counter[2];
+			continue;
+		}
 
-			default:
-				break;
+		if (isspace(str[i]))
+		{
+			++counter[3];
+			continue;
 		}
 	}	
 
-	return cnt;
+	return counter;
+}
+
+std::vector<int> str_count(const std::string& str, std::initializer_list<cnt_parameter> parameters)
+{
+	char i = -1;
+	char vectorLen = 0;
+
+	char posUp {-1}, posLw {-1}, posDg {-1}, posSp {-1};
+
+	for(int x : parameters)
+	{
+		++i;
+
+		if(posUp == -1 && x == upper)
+		{
+			posUp = i;
+			++vectorLen;
+			continue;
+		}
+
+		if(posLw == -1 && x == lower)
+		{
+			posLw = i;
+			++vectorLen;
+			continue;
+		}
+
+		if(posDg == -1 && x == digits)
+		{
+			posDg = i;
+			++vectorLen;
+			continue;
+		}
+
+		if(posSp == -1 && x == spaces)
+		{
+			posSp = i;
+			++vectorLen;
+			continue;
+		}
+	}
+
+	std::vector<int> counter(vectorLen);
+
+	for(int i = 0; i < str.length(); ++i)
+	{
+		if (posUp != -1 && isupper(str[i]))
+		{
+			++counter[posUp];
+			continue;
+		}
+
+		if (posLw != -1 && islower(str[i]))
+		{
+			++counter[posLw];
+			continue;
+		}
+
+		if (posDg != -1 && isdigit(str[i]))
+		{
+			++counter[posDg];
+			continue;
+		}
+
+		if (posSp != -1 && isspace(str[i]))
+		{
+			++counter[posSp];
+			continue;
+		}
+	}	
+
+	return counter;
 }
 
 std::string transform_string(const std::string& source)
