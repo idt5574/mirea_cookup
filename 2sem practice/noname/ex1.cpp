@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "usefull_functions.hpp"
+#include "ex1_headers/usefull_functions.hpp"
 
 int main()
 {
@@ -18,7 +18,7 @@ int main()
 
 	std::string newString = transform_string(str);
 
-	std::cout << newString << std::endl;
+	std::cout << newString << std::endl;a
 
 	return 0;
 }
