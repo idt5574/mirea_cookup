@@ -56,7 +56,7 @@ public:
 };
 
 bool CompareByScore(const Student& a, const Student& b) {
-    return a.GetScore() < b.GetScore();
+    return a.GetScore() > b.GetScore();
 }
 
 #endif
