@@ -1,5 +1,5 @@
-#ifndef _CUSTOM_EXCEPTIONS_EX3_HPP_
-#define _CUSTOM_EXCEPTIONS_EX3_HPP_
+#ifndef _STORAGE_ZONES_EXCEPTIONS_HPP_
+#define _STORAGE_ZONES_EXCEPTIONS_HPP_
 
 #include <exception>
 #include <string>
@@ -29,7 +29,7 @@ public:
 
     ZonesNotSettedException() 
     {
-        msg = "Error: to use storage zones features, previously you need to set storage zones\n howto: SetStorageZones(const std::vector<std::string, 5>*)";
+        msg = "Error: to use storage zones features, previously you need to set storage zones\n - howto: SetStorageZones(const std::vector<std::string, 5>*)";
     }
 
     
@@ -63,4 +63,4 @@ public:
 
 };
 
-#endif 
+#endif
