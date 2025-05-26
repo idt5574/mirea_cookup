@@ -7,10 +7,18 @@
 #include <array>
 
 #include "Author.hpp"
-#include "CustomExceptions.hpp"
+#include "custom_exceptions/StorageZoneExceptions.hpp"
+
+// ==========
 
 const std::array<std::string, 5>* storageZones;
+
+// ==========
+
 bool isZonesSetted = false;
+bool isLibrarySetted = false;
+
+// ==========
 
 class Book
 {
@@ -120,6 +128,8 @@ public:
     ~Book() {}
 
 };
+
+// ==========
 
 void SetStorageZones(const std::array<std::string, 5>* newStorageZones)
 {
