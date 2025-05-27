@@ -11,12 +11,8 @@
 
 // ==========
 
-const std::array<std::string, 5>* storageZones;
-
-// ==========
-
+static const std::array<std::string, 5>* storageZones;
 bool isZonesSetted = false;
-bool isLibrarySetted = false;
 
 // ==========
 
