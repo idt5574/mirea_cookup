@@ -7,7 +7,8 @@
 
 #include "ex3_headers/Author.hpp"
 #include "ex3_headers/Book.hpp"
-#include "ex3_headers/GenreStorage.hpp"
+#include "ex3_headers/GenreStorage.hpp"``
+#include "ex3_headers/Library.hpp"
 
 int main()
 {
@@ -19,18 +20,23 @@ int main()
         "adultBooks"  
     };
 
-    std::set<std::string> genreStorage;
+    std::set<std::string> genres;
+    std::map<std::string, Book> libeb;
 
     Author coolGuy = {"Charles", "Petzold"};
 
     Book programming = {"CODE", "Programming", coolGuy};
 
     SetStorageZones(&customZones);
-
-    SetGenreStorage(&genreStorage);
+    SetGenreStorage(genreStorage);
+    SetLibrary(lib);
 
     AddGenreToStorage("Sigmo");
     AddGenreToStorage(programming);
+
+    AddBookToLibrary(programming);
+
+    RemoveBookFromLibrary("Super Book");
 
     std::cout << GetStringOfGenres() << std::endl;
 
