@@ -9,66 +9,48 @@
 
 // ==========
 
-std::set<std::string>* genreStorage;
-bool isGenreStorageSetted = false;
-
-// ==========
-
-void SetGenreStorage(std::set<std::string>* newGenresStorage)
+class GenreStorage
 {
-    if(isGenreStorageSetted)
-        throw GenreStorageIsAlreadySetted();
+    std::set<std::string> genreStorage;
 
-    genreStorage = newGenresStorage;
-    isGenreStorageSetted = true;
-}
+public:
 
-void AddGenreToStorage(const std::string& genreName)
-{
-    if(!isGenreStorageSetted)
-            throw GenreStorageIsNotSetted();
+    void AddGenre(const std::string& genreName)
+    {
+        genreStorage.insert(genreName);
+    }
 
-    genreStorage->insert(genreName);
-}
+    void AddGenre(const Book& book)
+    {
+        genreStorage.insert(book.GetGenre());
+    }
 
-void AddGenreToStorage(const Book& book)
-{
-    if(!isGenreStorageSetted)
-        throw GenreStorageIsNotSetted();
+    void RemoveGenre(const std::string& genreName)
+    {
+        if(genreStorage.count(genreName) == 0)
+            return;
 
-    genreStorage->insert(book.GetGenre());
-}
+        genreStorage.erase(genreName);
+    }
 
-void RemoveGenreFromStorage(const std::string& genreName)
-{
-    if(!isGenreStorageSetted)
-        throw GenreStorageIsNotSetted();
-    
-    if(genreStorage->count(genreName) == 0)
-        return;
+    void RemoveGenre(const Book& book)
+    {
+        if(genreStorage.count(book.GetGenre()) == 0)
+            return;
 
-    genreStorage->erase(genreName);
-}
+        genreStorage.erase(book.GetGenre());
+    }
 
-void RemoveGenreFromStorage(const Book& book)
-{
-    if(!isGenreStorageSetted)
-        throw GenreStorageIsNotSetted();
-    
-    if(genreStorage->count(book.GetGenre()) == 0)
-        return;
+    std::string GetStringOfGenres()
+    {
+        std::string newString = "";
 
-    genreStorage->erase(book.GetGenre());
-}
+        for(std::string x : genreStorage)
+            newString += x + ' ';
 
-std::string GetStringOfGenres()
-{
-    std::string newString = "";
+        return newString;
+    }
+};
 
-    for(std::string x : *genreStorage)
-        newString += x + ' ';
-
-    return newString;
-}
 
 #endif
