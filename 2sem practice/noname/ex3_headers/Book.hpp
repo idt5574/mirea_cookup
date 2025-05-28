@@ -11,11 +11,6 @@
 
 // ==========
 
-static const std::array<std::string, 5>* storageZones;
-bool isZonesSetted = false;
-
-// ==========
-
 class Book
 {
     std::string title, genre;
@@ -23,15 +18,6 @@ class Book
 
     std::string zone = "null";
     bool isAvailable = true;
-
-    int _FindZone(const std::string& str)
-    {
-        for(int i = 0; i < 5; ++i)
-            if((*storageZones)[i] == str)
-                return i;
-
-        return -1;
-    }
 
 public:
 
@@ -64,17 +50,7 @@ public:
     { author = newAuthor; }
 
     void SetZone(const std::string& newZone)
-    {
-        if(!isZonesSetted)
-            throw ZonesNotSettedException();
-        
-        int result = _FindZone(newZone);
-
-        if (result == -1) 
-            throw UnknownStorageZoneException();
-
-        zone = newZone;
-    }
+    { zone = newZone; }
 
     void SetAvailability(bool newAvailability)
     { isAvailable = newAvailability; }
@@ -124,16 +100,5 @@ public:
     ~Book() {}
 
 };
-
-// ==========
-
-void SetStorageZones(const std::array<std::string, 5>* newStorageZones)
-{
-    if(isZonesSetted)
-        throw ZonesAlreadySettedException();
-
-    storageZones = newStorageZones;
-    isZonesSetted = true;
-}
 
 #endif
