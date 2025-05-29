@@ -42,7 +42,17 @@ public:
 
     void AddBook(const Book& newBook)
     {
-        library.insert({newBook.GetTitle(), newBook});
+        Book bookCopy = newBook;
+
+        if(bookCopy.GetZone() != "null" && !zones.Contains(bookCopy.GetZone()))
+        {
+            bookCopy.SetZone("null");
+            std::cout << "Warning: You tried to add book with unavailable zone. Book's zone setted into \"null\"";
+        }
+
+        genres.AddGenre(bookCopy);
+
+        library.insert({bookCopy.GetTitle(), bookCopy});
     }
 
     void RemoveBook(const std::string& bookTitle)
@@ -119,6 +129,27 @@ public:
             std::cout << "Warning: You tried to \"take\" a non-available book. The process will continue" << '\n';
             return Book();
         }
+    }
+
+    void Organize()
+    {
+        for(auto& [name, book] : library)
+        {
+            genres.AddGenre(book.GetGenre());
+
+            if(!zones.Contains(book.GetZone()))
+                book.SetZone("null");
+        }
+    }
+
+    std::string GetStringOfLibrary() const
+    {
+        std::string result = "";
+
+        for(auto& [name, book] : library)
+            result += name + ":\t" + book.GetAuthor().GetFirstname() + ' ' + book.GetAuthor().GetLastname() + ' ' + book.GetAuthor().GetPantronymic() + '\t' + book.GetGenre() + '\t' + book.GetZone() + '\n';
+        
+        return result;
     }
 
 };
