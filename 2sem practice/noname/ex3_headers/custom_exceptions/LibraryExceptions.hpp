@@ -47,6 +47,4 @@ public:
     ~LibraryIsAlreadySetted() {}
 };
 
-
-
 #endif
