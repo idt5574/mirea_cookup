@@ -41,7 +41,12 @@ public:
         genreStorage.erase(book.GetGenre());
     }
 
-    std::string GetStringOfGenres()
+    bool Contains(const std::string& genreName)
+    {
+        return genreStorage.count(genreName);
+    }
+
+    std::string GetStringOfGenres() const
     {
         std::string newString = "";
 
