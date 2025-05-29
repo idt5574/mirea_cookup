@@ -46,6 +46,16 @@ public:
         return false;
     }
 
+    std::string GetStringOfZones() const
+    {
+        std::string result = "";
+
+        for(std::string x : storageZones)
+            result += x + ' ';
+
+        return result;
+    }
+
     Item operator [] (short index)
     { return Item(this, index); }
 };
